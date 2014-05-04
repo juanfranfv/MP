@@ -1,0 +1,24 @@
+{% extends 'base.html' %}
+{% block encabezado %}Lista de inscriptos:{% endblock %}
+{% block contenido %}
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Nombre</th>
+                <th>Apellido</th>
+                <th>Telefono</th>
+                <th>Mail</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for item in lista_inscriptos %}
+                <tr>
+                    <th>{{ item.nombre }}</th>
+                    <th>{{ item.apellido }}</th>
+                    <th>{{ item.telefono }}</th>
+                    <th>{{ item.email }}</th>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+{% endblock %}
