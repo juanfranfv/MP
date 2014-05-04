@@ -12,7 +12,8 @@ https://docs.djangoproject.com/en/1.6/ref/settings/
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 import os
-BASE_DIR = os.path.dirname(os.path.dirname(__file__))
+BASE_DIR = os.path.dirname(os.path.realpath(__file__))
+
 
 
 # Quick-start development settings - unsuitable for production
@@ -28,16 +29,19 @@ TEMPLATE_DEBUG = True
 
 ALLOWED_HOSTS = []
 
+SITE_ID = 1
 
 # Application definition
 
 INSTALLED_APPS = (
-    'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
+    'django.contrib.sites',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'django.contrib.admin',
+    'django.contrib.admindocs',
     'inscripciones',
 )
 
@@ -61,9 +65,9 @@ WSGI_APPLICATION = 'MP.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': 'sgpdb',
-        'USER': 'postgres',
-        'PASSWORD': 'postgres',
+        'NAME': 'mp',
+        'USER': 'mp',
+        'PASSWORD': 'mp',
         'HOST': '127.0.0.1',
         'PORT': '5432',
     }
@@ -89,9 +93,16 @@ USE_TZ = True
 STATIC_URL = '/static/'
 
 TEMPLATE_DIRS = (
-    os.path.join(BASE_DIR, 'templates')
+    os.path.join(BASE_DIR, 'static/templates'),
 )
 
 STATIC_FILES = (
-    os.path.join(BASE_DIR, 'static')
+    os.path.join(BASE_DIR, 'static'),
 )
+
+STATICFILES_DIRS = (
+    os.path.join(BASE_DIR, 'static'),
+)
+
+TEMPLATE_LOADERS = ('django.template.loaders.filesystem.Loader',
+                    'django.template.loaders.app_directories.Loader')

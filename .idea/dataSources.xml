@@ -4,9 +4,9 @@
     <data-source source="LOCAL" name="Django default" uuid="29c305a8-76ad-4c41-8801-05ed6ac77a8b">
       <driver-ref>postgresql</driver-ref>
       <jdbc-driver>org.postgresql.Driver</jdbc-driver>
-      <jdbc-url>jdbc:postgresql://127.0.0.1:5432/sgpdb</jdbc-url>
-      <user-name>postgres</user-name>
-      <user-password>dfdadfc5dfd9dfdedfcddfd8dfcfdfd9</user-password>
+      <jdbc-url>jdbc:postgresql://127.0.0.1:5432/mp</jdbc-url>
+      <user-name>mp</user-name>
+      <user-password>dfc7dfda</user-password>
       <libraries />
     </data-source>
   </component>
