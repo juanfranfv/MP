@@ -2,6 +2,15 @@
 {% block titulo %}Hola{% endblock %}
 {% block encabezado %}Hola Mundo!{% endblock %}
 {% block contenido %}
-    <a href="{% url 'inscripciones.views.formulario_view' %}" class="btn btn-default">Inscrirse al retiro</a>
+    <a href="{% url 'inscripciones.views.formulario_view' %}" class="btn btn-default">Inscribirse al retiro</a>
     <a href="{% url 'inscripciones.views.lista_inscriptos_view' %}" class="btn btn-default">Lista de inscriptos</a>
+    {% for a in lista_actividades %}
+        <div class="list-group">
+            <a href="{% url 'inscripciones.views.formulario_actividad_view' a.id %}" class="list-group-item">
+                <h4>Inscripcion {{ a.nombre }}</h4>
+                <p>{{ a.descripcion }}</p>
+            </a>
+        </div>
+
+    {% endfor %}
 {% endblock %}

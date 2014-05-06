@@ -1,0 +1,32 @@
+{% extends 'home.html' %}
+{% block encabezado%}Inscripcion a {{ actividad.nombre }}{% endblock %}
+{% block contenido %}
+    {% if ipBoolean == True %}
+        <div class="alert alert-danger">Usted ya se ha inscripto a esta actividad</div>
+    {% else %}
+        <div class="jumbotron">
+            <h2>Descripcion:</h2>
+            <p>{{ actividad.descripcion }}</p>
+        </div>
+
+        <form id="formulario" method="post" action="">{% csrf_token %}
+            <table class="table">
+                {% for field in formulario %}
+                    {% if field.errors %}
+                        <tr class="list-group-item-danger">
+                    {% else %}
+                        <tr>
+                    {% endif %}
+                            <th>{{ field.label_tag }}</th>
+                            <td>
+                                {{ field.errors }}
+                                {{ field }}
+                            </td>
+                        </tr>
+                {% endfor %}
+            </table>
+            <button type="submit" class="btn btn-default">Confirmar</button>
+        </form>
+
+    {% endif %}
+{% endblock %}

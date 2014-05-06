@@ -1,5 +1,6 @@
 from django.db import models
 
+
 # Create your models here.
 
 class MiForm(models.Model):
@@ -18,7 +19,7 @@ class Actividad(models.Model):
     #tipo = models.ForeignKey('tipo')
 
     def __unicode__(self):
-        return self.Nombre
+        return self.nombre
 
     class Meta:
         verbose_name_plural = "actividades"
@@ -49,4 +50,38 @@ class Formulario(models.Model):
         return True
 
     def __unicode__(self):
-        return self.Nombre
+        return self.nombre
+
+class FormularioActividad(models.Model):
+    MASCULINO = 'M'
+    FEMENINO = 'F'
+    SEXO_OPCIONES = (
+        (MASCULINO, 'Masculino'),
+        (FEMENINO, 'Femenino')
+    )
+    nombre = models.CharField(max_length=30)
+    apellido = models.CharField(max_length=30)
+    edad = models.PositiveIntegerField()
+    fechaNacimiento = models.DateField(verbose_name="Fecha de Nacimiento", help_text="Formato: dd/mm/aaaa")
+    cedula = models.PositiveIntegerField()
+    telefono = models.CharField(max_length=30)
+    email = models.EmailField()
+    institucion = models.CharField(max_length=30, verbose_name="Colegio/Universidad")
+    curso = models.CharField(max_length=30, blank=True)
+    sexo = models.CharField(max_length=1, choices=SEXO_OPCIONES)
+    invitadoPeregrino = models.CharField(max_length=30, verbose_name="Peregrino que te invito", blank=True)
+    enfermedad = models.TextField(verbose_name="Enfermedad/Alergias", blank=True)
+    contacto = models.CharField(max_length=30)
+    telefonoContacto = models.CharField(max_length=30)
+    relacionContacto = models.CharField(max_length=30)
+    alimentacion = models.TextField(verbose_name="Dieta Especial", blank=True)
+    comentarios = models.TextField(blank=True)
+    direccionIP = models.IPAddressField()
+    fechaInscripcion = models.DateTimeField(auto_now_add=True)
+    actividad = models.ForeignKey(Actividad, blank=True, null=True)
+
+    def validIp(self):
+        return True
+
+    def __unicode__(self):
+        return self.nombre
