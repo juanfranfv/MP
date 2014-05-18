@@ -63,7 +63,7 @@ class FormularioActividad(models.Model):
     apellido = models.CharField(max_length=30)
     edad = models.PositiveIntegerField()
     fechaNacimiento = models.DateField(verbose_name="Fecha de Nacimiento", help_text="Formato: dd/mm/aaaa")
-    cedula = models.PositiveIntegerField()
+    cedula = models.CharField(max_length=30)
     telefono = models.CharField(max_length=30)
     email = models.EmailField()
     institucion = models.CharField(max_length=30, verbose_name="Colegio/Universidad")
@@ -79,6 +79,7 @@ class FormularioActividad(models.Model):
     direccionIP = models.IPAddressField()
     fechaInscripcion = models.DateTimeField(auto_now_add=True)
     actividad = models.ForeignKey(Actividad, blank=True, null=True)
+
 
     def validIp(self):
         return True

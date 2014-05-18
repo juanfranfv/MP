@@ -17,9 +17,11 @@ def form_actividad(request):
             return HttpResponseRedirect('/inicio/')
     else:
         formulario = ActividadForm()
-    return render_to_response('form-retiro.html',
+    return render_to_response(
+        'form-retiro.html',
         {'formulario': formulario},
-        context_instance=RequestContext(request))
+        context_instance=RequestContext(request)
+    )
 
 def formulario_view(request):
     if request.method=='POST':
@@ -50,6 +52,7 @@ def get_client_ip(request):
     return ip
 
 def formulario_actividad_view(request, idActividad):
+
     ip = get_client_ip(request)
     actividad = Actividad.objects.get(pk=idActividad)
     ipBoolean = True
