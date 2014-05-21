@@ -7,7 +7,7 @@
     {% for a in lista_actividades %}
         <div class="list-group">
             <a href="{% url 'inscripciones.views.formulario_actividad_view' a.id %}" class="list-group-item">
-                <h4>Inscripcion {{ a.nombre }} <small>Haz click para inscribirte</small></h4>
+                <h4>Inscripcion {{ a.nombre }} <small>Haz click aqui para inscribirte</small></h4>
                 <p>{{ a.descripcion }}</p>
             </a>
         </div>
