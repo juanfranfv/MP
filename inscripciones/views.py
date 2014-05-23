@@ -2,7 +2,6 @@ from django.shortcuts import render, render_to_response, HttpResponseRedirect, R
 from forms import *
 from models import *
 from django.core.exceptions import *
-from datetime import datetime
 from django.utils import timezone
 # Create your views here.
 
