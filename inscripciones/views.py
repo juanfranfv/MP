@@ -63,7 +63,7 @@ def formulario_actividad_view(request, idActividad):
     print timezone.now() < actividad.fechaActivacion
     if timezone.now() < actividad.fechaActivacion:
         suceso = False
-        mensaje = 'La inscripcion aun no se encuentra habilitada'
+        mensaje = 'La inscripcion a "' + actividad.nombre + '" aun no se encuentra habilitada'
         lista_actividades = Actividad.objects.all()
         return render_to_response(
             'home.html',
@@ -74,6 +74,7 @@ def formulario_actividad_view(request, idActividad):
         f = FormularioActividad.objects.get(direccionIP=ip, actividad=actividad)
     except ObjectDoesNotExist:
         ipBoolean = False
+
 
     if request.method=='POST':
         formularioMod = FormularioActividad()
