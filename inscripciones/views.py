@@ -2,10 +2,13 @@ from django.shortcuts import render, render_to_response, HttpResponseRedirect, R
 from forms import *
 from models import *
 from django.core.exceptions import *
+from datetime import datetime
+from django.utils import timezone
 # Create your views here.
 
 def inicio(request):
     lista_actividades = Actividad.objects.all()
+
     return render_to_response('home.html', {'lista_actividades': lista_actividades}, context_instance=RequestContext(request))
 
 
@@ -56,6 +59,18 @@ def formulario_actividad_view(request, idActividad):
     ip = get_client_ip(request)
     actividad = Actividad.objects.get(pk=idActividad)
     ipBoolean = True
+    print timezone.now()
+    print actividad.fechaActivacion
+    print timezone.now() < actividad.fechaActivacion
+    if timezone.now() < actividad.fechaActivacion:
+        suceso = False
+        mensaje = 'La inscripcion aun no se encuentra habilitada'
+        lista_actividades = Actividad.objects.all()
+        return render_to_response(
+            'home.html',
+            {'mensaje': mensaje, 'suceso': suceso, 'lista_actividades': lista_actividades},
+            context_instance=RequestContext(request)
+        )
     try:
         f = FormularioActividad.objects.get(direccionIP=ip, actividad=actividad)
     except ObjectDoesNotExist:
@@ -69,9 +84,17 @@ def formulario_actividad_view(request, idActividad):
 
         if formularioForm.is_valid():
             formularioForm.save()
-            return HttpResponseRedirect('/')
+            suceso = True
+            mensaje = 'Su solicitud ha sido procesada con exito'
+            return render_to_response(
+                'home.html',
+                {'mensaje': mensaje, 'suceso': suceso},
+                context_instance=RequestContext(request)
+            )
     else:
         formularioForm = FormularioActividadForm()
-    return render_to_response('form-actividad2.html',
+    return render_to_response(
+        'form-actividad2.html',
         {'formulario': formularioForm, 'ipBoolean':ipBoolean, 'actividad':actividad},
-        context_instance=RequestContext(request))
+        context_instance=RequestContext(request)
+    )
