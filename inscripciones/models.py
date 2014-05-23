@@ -16,13 +16,14 @@ class Actividad(models.Model):
     fechaActivacion = models.DateTimeField()
     fechaCreacion = models.DateTimeField(auto_now=True)
     #usuario_creacion = models.ForeignKey('usuario')
-    #tipo = models.ForeignKey('tipo')
+    #tipo = models.ForeignKey('tipo', nombre="tipo_id")
 
     def __unicode__(self):
         return self.nombre
 
     class Meta:
         verbose_name_plural = "actividades"
+
 
 class Formulario(models.Model):
     nombre = models.CharField(max_length=30)
