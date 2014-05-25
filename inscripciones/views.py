@@ -3,6 +3,11 @@ from forms import *
 from models import *
 from django.core.exceptions import *
 from django.utils import timezone
+from django.contrib.auth.forms import AuthenticationForm
+from django.contrib.auth import login, authenticate, logout
+from django.contrib.auth.decorators import login_required
+
+
 # Create your views here.
 
 def inicio(request):
@@ -58,9 +63,20 @@ def formulario_actividad_view(request, idActividad):
     ip = get_client_ip(request)
     actividad = Actividad.objects.get(pk=idActividad)
     ipBoolean = True
-    print timezone.now()
-    print actividad.fechaActivacion
-    print timezone.now() < actividad.fechaActivacion
+    cantidadPermitida = actividad.cantidadSuplentes + actividad.cantidadTitulares
+    cantidadInscriptos = FormularioActividad.objects.filter(actividad=actividad).count()
+    if cantidadInscriptos >= cantidadPermitida:
+        suceso = False
+        mensaje = 'El cupo  para "' + actividad.nombre + '" se encuentra lleno'
+        mensaje += '\n'
+        mensaje += 'Si tiene alguna consulta, comuniquese con el encargado de inscripciones al correo: '
+        mensaje += actividad.emailContacto
+        return render_to_response(
+            'home.html',
+            {'mensaje': mensaje, 'suceso': suceso},
+            context_instance=RequestContext(request)
+        )
+
     if timezone.now() < actividad.fechaActivacion:
         suceso = False
         mensaje = 'La inscripcion a "' + actividad.nombre + '" aun no se encuentra habilitada'
@@ -83,6 +99,7 @@ def formulario_actividad_view(request, idActividad):
         formularioForm = FormularioActividadForm(request.POST, instance=formularioMod)
 
         if formularioForm.is_valid():
+            print formularioForm
             formularioForm.save()
             suceso = True
             mensaje = 'Su solicitud ha sido procesada con exito'
@@ -96,5 +113,42 @@ def formulario_actividad_view(request, idActividad):
     return render_to_response(
         'form-actividad2.html',
         {'formulario': formularioForm, 'ipBoolean':ipBoolean, 'actividad':actividad},
+        context_instance=RequestContext(request)
+    )
+
+def iniciar_sesion(request):
+
+    if request.method == 'POST':
+        formulario = AuthenticationForm(request.POST)
+        if formulario.is_valid:
+            usuario = request.POST['username']
+            clave = request.POST['password']
+            acceso = authenticate(username=usuario, password=clave)
+            if acceso is not None:
+                if acceso.is_active:
+                    login(request, acceso)
+                    return lista_actividades_view(request)
+    else:
+        formulario = AuthenticationForm()
+    return render_to_response('iniciar_sesion.html', {'formulario': formulario},
+                              context_instance=RequestContext(request))
+
+
+@login_required(login_url='/iniciar_sesion')
+def lista_actividades_view(request):
+    actividades = Actividad.objects.all()
+    return render_to_response(
+        'lista_actividades.html',
+        {'lista_actividades': actividades},
+        context_instance=RequestContext(request)
+    )
+
+@login_required(login_url='/iniciar_sesion')
+def inscriptos_view(request, id_actividad):
+    actividad = Actividad.objects.get(pk=id_actividad)
+    lista_inscriptos = FormularioActividad.objects.filter(actividad=actividad)
+    return render_to_response(
+        'inscriptos.html',
+        {'lista_inscriptos': lista_inscriptos, 'actividad': actividad},
         context_instance=RequestContext(request)
     )

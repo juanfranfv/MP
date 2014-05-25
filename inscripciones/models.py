@@ -15,6 +15,9 @@ class Actividad(models.Model):
     descripcion = models.TextField()
     fechaActivacion = models.DateTimeField()
     fechaCreacion = models.DateTimeField(auto_now=True)
+    cantidadTitulares = models.PositiveIntegerField()
+    cantidadSuplentes = models.PositiveIntegerField()
+    emailContacto = models.EmailField()
     #usuario_creacion = models.ForeignKey('usuario')
     #tipo = models.ForeignKey('tipo', nombre="tipo_id")
 
@@ -84,6 +87,8 @@ class FormularioActividad(models.Model):
 
     def validIp(self):
         return True
+    def fechaNacimientoCorrectFormat(self):
+        return str(self.fechaNacimiento.day) + '/' + str(self.fechaNacimiento.month) + '/' + str(self.fechaNacimiento.year)
 
     def __unicode__(self):
         return self.nombre

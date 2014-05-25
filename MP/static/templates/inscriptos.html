@@ -1,0 +1,56 @@
+{% extends 'lista_actividades.html' %}
+{% block titulo %}Movimiento Peregrino{% endblock %}
+{% block encabezado %}Lista de inscriptos a la actividad: {{ actividad }}{% endblock %}
+{% block contenido %}
+    <div class="table-responsive">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Nombre</th>
+                    <th>Apellido</th>
+                    <th>Edad</th>
+                    <th>Fecha de Nacimiento</th>
+                    <th>CI</th>
+                    <th>Telefono</th>
+                    <th>Email</th>
+                    <th>Colegio/Universidad</th>
+                    <th>Curso</th>
+                    <th>Sexo</th>
+                    <th>Peregrino que te invito</th>
+                    <th>Enfermedad/Alergia</th>
+                    <th>Contacto</th>
+                    <th>Telefono Contacto</th>
+                    <th>Relacion Contacto</th>
+                    <th>Alimentacion</th>
+                    <th>Comentarios</th>
+                    <th>Fecha Inscripcion</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for inscripto in lista_inscriptos %}
+                    <tr>
+                        <td>{{ inscripto.nombre }}</td>
+                        <td>{{ inscripto.apellido }}</td>
+                        <td>{{ inscripto.edad }}</td>
+                        <td>{{ inscripto.fechaNacimiento }}</td>
+                        <td>{{ inscripto.cedula }}</td>
+                        <td>{{ inscripto.telefono }}</td>
+                        <td>{{ inscripto.email }}</td>
+                        <td>{{ inscripto.institucion }}</td>
+                        <td>{{ inscripto.curso }}</td>
+                        <td>{{ inscripto.get_sexo_display }}</td>
+                        <td>{{ inscripto.invitadoPeregrino }}</td>
+                        <td>{{ inscripto.enfermedad }}</td>
+                        <td>{{ inscripto.contacto }}</td>
+                        <td>{{ inscripto.telefonoContacto }}</td>
+                        <td>{{ inscripto.relacionContacto }}</td>
+                        <td>{{ inscripto.alimentacion }}</td>
+                        <td>{{ inscripto.comentarios }}</td>
+                        <td>{{ inscripto.fechaInscripcion }}</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+{% endblock %}
