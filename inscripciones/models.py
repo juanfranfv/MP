@@ -83,11 +83,11 @@ class FormularioActividad(models.Model):
     direccionIP = models.IPAddressField()
     fechaInscripcion = models.DateTimeField(auto_now_add=True)
     actividad = models.ForeignKey(Actividad, blank=True, null=True)
-
+    puesto = models.PositiveIntegerField()
 
     def validIp(self):
         return True
-    
+
     def fechaNacimientoCorrectFormat(self):
         return str(self.fechaNacimiento.day) + '/' + str(self.fechaNacimiento.month) + '/' + str(self.fechaNacimiento.year)
 

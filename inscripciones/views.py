@@ -6,6 +6,8 @@ from django.utils import timezone
 from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth import login, authenticate, logout
 from django.contrib.auth.decorators import login_required
+from django.conf import settings
+from django.core.mail import send_mail
 
 
 # Create your views here.
@@ -96,11 +98,22 @@ def formulario_actividad_view(request, idActividad):
         formularioMod = FormularioActividad()
         formularioMod.actividad = actividad
         formularioMod.direccionIP = ip
+        formularioMod.puesto = 1000
         formularioForm = FormularioActividadForm(request.POST, instance=formularioMod)
 
         if formularioForm.is_valid():
-            print formularioForm
-            formularioForm.save()
+
+            inscripto = formularioForm.save()
+            cantidad = FormularioActividad.objects.filter(actividad=actividad).filter(pk__lte=inscripto.id).count()
+            inscripto.puesto = cantidad
+            inscripto.save()
+            titulo_mail = 'Inscripcion a "' + actividad.nombre + '"'
+            if inscripto.puesto < actividad.cantidadTitulares:
+                mensaje_mail = 'Su inscripcion ha sido procesada con exito'
+            else:
+                mensaje_mail = 'Usted esta en lista de espera'
+            destinatario = [inscripto.email]
+            send_mail(titulo_mail, mensaje_mail, settings.EMAIL_HOST_USER, destinatario, fail_silently=False)
             suceso = True
             mensaje = 'Su solicitud ha sido procesada con exito'
             return render_to_response(
