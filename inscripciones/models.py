@@ -87,6 +87,7 @@ class FormularioActividad(models.Model):
 
     def validIp(self):
         return True
+    
     def fechaNacimientoCorrectFormat(self):
         return str(self.fechaNacimiento.day) + '/' + str(self.fechaNacimiento.month) + '/' + str(self.fechaNacimiento.year)
 
