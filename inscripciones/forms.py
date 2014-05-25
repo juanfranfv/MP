@@ -5,6 +5,7 @@ from inscripciones.models import *
 from django.forms.extras.widgets import SelectDateWidget
 from django.contrib.admin.widgets import AdminDateWidget
 
+forms.DateInput.input_type = "date"
 
 class MyForm(forms.ModelForm):
 
@@ -27,10 +28,10 @@ class FormularioForm(MyForm):
         #exclude = ['Direccion_ip', 'Fecha_inscripcion', 'Actividad']
 
 class FormularioActividadForm(MyForm):
+
     class Meta:
         model = FormularioActividad
-        exclude = ['direccionIP', 'fechaInscripcion', 'actividad']
+        exclude = ['direccionIP', 'fechaInscripcion', 'actividad', 'puesto']
         widgets = {
             'sexo': Select(choices=FormularioActividad.SEXO_OPCIONES),
-            'fechaNacimiento': AdminDateWidget(),
         }
