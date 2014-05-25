@@ -95,15 +95,15 @@ def formulario_actividad_view(request, idActividad):
 
 
     if request.method=='POST':
-        formularioMod = FormularioActividad()
-        formularioMod.actividad = actividad
-        formularioMod.direccionIP = ip
-        formularioMod.puesto = 1000
-        formularioForm = FormularioActividadForm(request.POST, instance=formularioMod)
+        instanciaFormulario = FormularioActividad()
+        instanciaFormulario.actividad = actividad
+        instanciaFormulario.direccionIP = ip
+        instanciaFormulario.puesto = 1000
+        formulario = FormularioActividadForm(request.POST, instance=instanciaFormulario)
 
-        if formularioForm.is_valid():
+        if formulario.is_valid():
 
-            inscripto = formularioForm.save()
+            inscripto = formulario.save()
             cantidad = FormularioActividad.objects.filter(actividad=actividad).filter(pk__lte=inscripto.id).count()
             inscripto.puesto = cantidad
             inscripto.save()
@@ -122,10 +122,10 @@ def formulario_actividad_view(request, idActividad):
                 context_instance=RequestContext(request)
             )
     else:
-        formularioForm = FormularioActividadForm()
+        formulario = FormularioActividadForm()
     return render_to_response(
         'form-actividad2.html',
-        {'formulario': formularioForm, 'ipBoolean':ipBoolean, 'actividad':actividad},
+        {'formulario': formulario, 'ipBoolean':ipBoolean, 'actividad':actividad},
         context_instance=RequestContext(request)
     )
 
