@@ -1,0 +1,2 @@
+#Ignorar el directorio .idea/ y sus archivos dentro para los usuarios de pycharm.
+.idea/
