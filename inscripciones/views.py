@@ -61,7 +61,7 @@ def get_client_ip(request):
     return ip
 
 def formulario_actividad_view(request, idActividad):
-
+    #formulario_actividad
     ip = get_client_ip(request)
     actividad = Actividad.objects.get(pk=idActividad)
     ipBoolean = True
