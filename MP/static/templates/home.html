@@ -1,7 +1,24 @@
 {% extends 'base.html' %}
-{% block titulo %}Hola{% endblock %}
-{% block encabezado %}Hola Mundo!{% endblock %}
+{% block titulo %}Movimiento Peregrino{% endblock %}
+{% block encabezado %}Actividades del Movimiento Peregrino{% endblock %}
 {% block contenido %}
-    <a href="{% url 'inscripciones.views.formulario_view' %}" class="btn btn-default">Inscrirse al retiro</a>
-    <a href="{% url 'inscripciones.views.lista_inscriptos_view' %}" class="btn btn-default">Lista de inscriptos</a>
+    {% if suceso == True %}
+        <div class="alert alert-success">{{ mensaje }}</div>
+    {% elif suceso == False %}
+        <div class="alert alert-danger">{{ mensaje }}</div>
+    {% endif %}
+    <!--
+        <a href="{% url 'inscripciones.views.formulario_view' %}" class="btn btn-default">Inscribirse al retiro</a>
+        <a href="{% url 'inscripciones.views.lista_inscriptos_view' %}" class="btn btn-default">Lista de inscriptos</a>
+    -->
+    {% for a in lista_actividades %}
+        <div class="list-group">
+            <a href="{% url 'inscripciones.views.formulario_actividad_view' a.id %}" class="list-group-item">
+                <h4>Inscripcion {{ a.nombre }} <small>Haz click aqui para inscribirte</small></h4>
+                <p>{{ a.descripcion }}</p>
+            </a>
+        </div>
+
+    {% endfor %}
+
 {% endblock %}

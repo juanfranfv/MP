@@ -1,6 +1,9 @@
 __author__ = 'jf'
 from django import forms
+from django.forms import Select
 from inscripciones.models import *
+from django.forms.extras.widgets import SelectDateWidget
+from django.contrib.admin.widgets import AdminDateWidget
 
 
 class MyForm(forms.ModelForm):
@@ -22,3 +25,12 @@ class FormularioForm(MyForm):
     class Meta:
         model = Formulario
         #exclude = ['Direccion_ip', 'Fecha_inscripcion', 'Actividad']
+
+class FormularioActividadForm(MyForm):
+    class Meta:
+        model = FormularioActividad
+        exclude = ['direccionIP', 'fechaInscripcion', 'actividad']
+        widgets = {
+            'sexo': Select(choices=FormularioActividad.SEXO_OPCIONES),
+            'fechaNacimiento': AdminDateWidget(),
+        }

@@ -16,6 +16,7 @@
                 <li class="active"><a href="/">Inicio</a></li>
                 <li><a href="#">Contacto</a></li>
             </ul>
+
             <h3 class="text-muted">MP</h3>
         </div>
         <div class="row">
@@ -23,7 +24,17 @@
                 <div class="panel panel-default">
                     <div class="panel-body">
                         <div class="page-header">
-                            <h3>{% block encabezado %} {% endblock %}</h3>
+                            <div class="media">
+                                <a class="pull-left" href="#">
+                                    <img class="img-responsive" src="{{ STATIC_URL }}img/MP.png" style="height: 100px; width: 100px;" >
+                                </a>
+                                <div class="media-body">
+                                    <br>
+                                    <h1 class="media-heading">{% block encabezado %} {% endblock %}</h1>
+                                </div>
+                            </div>
+
+
                         </div>
                         {% block contenido %}{% endblock %}
 
