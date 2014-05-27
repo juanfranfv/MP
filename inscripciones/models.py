@@ -93,3 +93,6 @@ class FormularioActividad(models.Model):
 
     def __unicode__(self):
         return self.nombre
+
+    class Meta:
+        unique_together = ("actividad", "cedula")

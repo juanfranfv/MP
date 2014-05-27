@@ -88,10 +88,13 @@ def formulario_actividad_view(request, idActividad):
             {'mensaje': mensaje, 'suceso': suceso, 'lista_actividades': lista_actividades},
             context_instance=RequestContext(request)
         )
+    #Validacion del IP segun la actividad, excluido para las pruebas
+    """
     try:
         f = FormularioActividad.objects.get(direccionIP=ip, actividad=actividad)
     except ObjectDoesNotExist:
         ipBoolean = False
+    """
 
 
     if request.method=='POST':
