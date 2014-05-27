@@ -8,7 +8,7 @@ from django.contrib.auth import login, authenticate, logout
 from django.contrib.auth.decorators import login_required
 from django.conf import settings
 from django.core.mail import send_mail
-
+from django.db import IntegrityError
 
 # Create your views here.
 
@@ -69,9 +69,8 @@ def formulario_actividad_view(request, idActividad):
     cantidadInscriptos = FormularioActividad.objects.filter(actividad=actividad).count()
     if cantidadInscriptos >= cantidadPermitida:
         suceso = False
-        mensaje = 'El cupo  para "' + actividad.nombre + '" se encuentra lleno'
-        mensaje += '\n'
-        mensaje += 'Si tiene alguna consulta, comuniquese con el encargado de inscripciones al correo: '
+        mensaje = 'El cupo  para "' + actividad.nombre + '" se encuentra lleno.'
+        mensaje += ' Si tiene alguna consulta, comuniquese con el encargado de inscripciones al correo: '
         mensaje += actividad.emailContacto
         return render_to_response(
             'home.html',
@@ -95,7 +94,7 @@ def formulario_actividad_view(request, idActividad):
     except ObjectDoesNotExist:
         ipBoolean = False
     """
-
+    ipBoolean = False
 
     if request.method=='POST':
         instanciaFormulario = FormularioActividad()
@@ -106,12 +105,21 @@ def formulario_actividad_view(request, idActividad):
 
         if formulario.is_valid():
 
-            inscripto = formulario.save()
+            try:
+                inscripto = formulario.save()
+            except IntegrityError:
+                suceso = False
+                mensaje = 'Usted ya se ha inscripto a esta actividad'
+                return render_to_response(
+                    'home.html',
+                    {'mensaje': mensaje, 'suceso': suceso},
+                    context_instance=RequestContext(request)
+                )
             cantidad = FormularioActividad.objects.filter(actividad=actividad).filter(pk__lte=inscripto.id).count()
             inscripto.puesto = cantidad
             inscripto.save()
             titulo_mail = 'Inscripcion a "' + actividad.nombre + '"'
-            if inscripto.puesto < actividad.cantidadTitulares:
+            if inscripto.puesto <= actividad.cantidadTitulares:
                 mensaje_mail = 'Su inscripcion ha sido procesada con exito'
             else:
                 mensaje_mail = 'Usted esta en lista de espera'
