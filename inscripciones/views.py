@@ -9,6 +9,8 @@ from django.contrib.auth.decorators import login_required
 from django.conf import settings
 from django.core.mail import send_mail
 from django.db import IntegrityError
+import csv
+from django.http import HttpResponse
 
 # Create your views here.
 
@@ -127,6 +129,14 @@ def formulario_actividad_view(request, idActividad):
             send_mail(titulo_mail, mensaje_mail, settings.EMAIL_HOST_USER, destinatario, fail_silently=False)
             suceso = True
             mensaje = 'Su solicitud ha sido procesada con exito'
+            #Csv
+            """
+            response = HttpResponse(content_type='text/csv')
+            response['Content-Disposition'] = 'attachment; filename="actividad.csv'
+            writer = csv.writer(response)
+            writer.writerow(['Nombre', 'Apellido', 'Cedula', 'Email', 'Telefono'])
+            writer.writerow([inscripto.nombre, inscripto.apellido, inscripto.cedula, inscripto.email, inscripto.telefono])
+            """
             return render_to_response(
                 'home.html',
                 {'mensaje': mensaje, 'suceso': suceso},
