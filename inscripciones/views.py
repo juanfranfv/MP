@@ -7,9 +7,10 @@ from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth import login, authenticate, logout
 from django.contrib.auth.decorators import login_required
 from django.conf import settings
-from django.core.mail import send_mail
+from django.core.mail import send_mail, EmailMessage
 from django.db import IntegrityError
 import csv
+import StringIO
 from django.http import HttpResponse
 
 # Create your views here.
@@ -64,12 +65,14 @@ def get_client_ip(request):
 
 def formulario_actividad_view(request, idActividad):
     #formulario_actividad
+
     ip = get_client_ip(request)
     actividad = Actividad.objects.get(pk=idActividad)
     ipBoolean = True
     cantidadPermitida = actividad.cantidadSuplentes + actividad.cantidadTitulares
     cantidadInscriptos = FormularioActividad.objects.filter(actividad=actividad).count()
     if cantidadInscriptos >= cantidadPermitida:
+
         suceso = False
         mensaje = 'El cupo  para "' + actividad.nombre + '" se encuentra lleno.'
         mensaje += ' Si tiene alguna consulta, comuniquese con el encargado de inscripciones al correo: '
@@ -89,6 +92,10 @@ def formulario_actividad_view(request, idActividad):
             {'mensaje': mensaje, 'suceso': suceso, 'lista_actividades': lista_actividades},
             context_instance=RequestContext(request)
         )
+    else:
+        if actividad.estado == Actividad.INACTIVO:
+            actividad.estado = Actividad.ACTIVO
+            actividad.save()
     #Validacion del IP segun la actividad, excluido para las pruebas
     """
     try:
@@ -96,6 +103,7 @@ def formulario_actividad_view(request, idActividad):
     except ObjectDoesNotExist:
         ipBoolean = False
     """
+
     ipBoolean = False
 
     if request.method=='POST':
@@ -129,14 +137,22 @@ def formulario_actividad_view(request, idActividad):
             send_mail(titulo_mail, mensaje_mail, settings.EMAIL_HOST_USER, destinatario, fail_silently=False)
             suceso = True
             mensaje = 'Su solicitud ha sido procesada con exito'
-            #Csv
-            """
-            response = HttpResponse(content_type='text/csv')
-            response['Content-Disposition'] = 'attachment; filename="actividad.csv'
-            writer = csv.writer(response)
-            writer.writerow(['Nombre', 'Apellido', 'Cedula', 'Email', 'Telefono'])
-            writer.writerow([inscripto.nombre, inscripto.apellido, inscripto.cedula, inscripto.email, inscripto.telefono])
-            """
+
+            if cantidad == cantidadPermitida:
+                if actividad.estado == Actividad.ACTIVO:
+                    actividad.estado = actividad.FINALIZADO
+                    actividad.save()
+                    lista_inscriptos = FormularioActividad.objects.filter(actividad=actividad)
+                    csvfile = StringIO.StringIO()
+                    csvwriter = csv.writer(csvfile, delimiter=';')
+                    csvwriter.writerow(['Puesto', 'Nombre', 'Apellido', 'Cedula', 'Telefono', 'Email'])
+                    for inscripto in lista_inscriptos:
+                        csvwriter.writerow([inscripto.puesto, inscripto.nombre, inscripto.apellido,
+                                            inscripto.cedula, inscripto.telefono, inscripto.email])
+                    email = EmailMessage('Inscriptos', 'Documento con los inscriptos',
+                                         settings.EMAIL_HOST_USER, [actividad.emailContacto])
+                    email.attach('inscriptos.csv', csvfile.getvalue(), 'text/csv')
+                    email.send()
             return render_to_response(
                 'home.html',
                 {'mensaje': mensaje, 'suceso': suceso},

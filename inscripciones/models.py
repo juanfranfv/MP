@@ -18,6 +18,15 @@ class Actividad(models.Model):
     cantidadTitulares = models.PositiveIntegerField()
     cantidadSuplentes = models.PositiveIntegerField()
     emailContacto = models.EmailField()
+    ACTIVO = 'A'
+    INACTIVO = 'I'
+    FINALIZADO = 'F'
+    ESTADO_OPCIONES = (
+        (ACTIVO, 'Activo'),
+        (INACTIVO, 'Inactivo'),
+        (FINALIZADO, 'Finalizado'),
+    )
+    estado = models.CharField(max_length=1, choices=ESTADO_OPCIONES, default=INACTIVO)
     #usuario_creacion = models.ForeignKey('usuario')
     #tipo = models.ForeignKey('tipo', nombre="tipo_id")
 
@@ -63,6 +72,7 @@ class FormularioActividad(models.Model):
         (MASCULINO, 'Masculino'),
         (FEMENINO, 'Femenino')
     )
+
     nombre = models.CharField(max_length=30)
     apellido = models.CharField(max_length=30)
     edad = models.PositiveIntegerField()
