@@ -177,7 +177,7 @@ def formulario_actividad_view(request, idActividad):
                                             inscripto.direccionIP, inscripto.fechaInscripcion])
                     email = EmailMessage('Inscriptos', 'Documento con los inscriptos',
                                          settings.EMAIL_HOST_USER, [actividad.emailContacto])
-                    email.attach('inscriptos-' + actividad.nombre + '.xls', csvfile.getvalue(), 'text/csv')
+                    email.attach('inscriptos-' + actividad.nombre + '.csv', csvfile.getvalue(), 'text/csv')
                     email.send()
             return render_to_response(
                 'home.html',
