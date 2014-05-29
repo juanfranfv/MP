@@ -168,12 +168,12 @@ def formulario_actividad_view(request, idActividad):
                                         'Telefono Contacto', 'Dieta Especial', 'Comentarios', 'IP',
                                         'Fecha de inscripcion'])
                     for inscripto in lista_inscriptos:
-                        csvwriter.writerow([inscripto.puesto, inscripto.nombre, inscripto.apellido,
-                                            inscripto.edad, inscripto.fechaNacimiento, inscripto.cedula,
-                                            inscripto.telefono, inscripto.email, inscripto.institucion,
-                                            inscripto.curso, inscripto.get_sexo_display(), inscripto.invitadoPeregrino,
-                                            inscripto.enfermedad, inscripto.contacto, inscripto.relacionContacto,
-                                            inscripto.telefonoContacto, inscripto.alimentacion, inscripto.comentarios,
+                        csvwriter.writerow([inscripto.puesto, inscripto.nombre.encode('utf8'), inscripto.apellido.encode('utf8'),
+                                            inscripto.edad, inscripto.fechaNacimiento, inscripto.cedula.encode('utf8'),
+                                            inscripto.telefono.encode('utf8'), inscripto.email, inscripto.institucion.encode('utf8'),
+                                            inscripto.curso.encode('utf8'), inscripto.get_sexo_display(), inscripto.invitadoPeregrino.encode('utf8'),
+                                            inscripto.enfermedad.encode('utf8'), inscripto.contacto.encode('utf8'), inscripto.relacionContacto.encode('utf8'),
+                                            inscripto.telefonoContacto.encode('utf8'), inscripto.alimentacion.encode('utf8'), inscripto.comentarios.encode('utf8'),
                                             inscripto.direccionIP, inscripto.fechaInscripcion])
                     email = EmailMessage('Inscriptos', 'Documento con los inscriptos',
                                          settings.EMAIL_HOST_USER, [actividad.emailContacto])
