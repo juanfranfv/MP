@@ -2,18 +2,36 @@ from django.shortcuts import render, render_to_response, HttpResponseRedirect, R
 from forms import *
 from models import *
 from django.core.exceptions import *
+from django.template import Context
+from django.template.loader import get_template
 from django.utils import timezone
 from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth import login, authenticate, logout
 from django.contrib.auth.decorators import login_required
 from django.conf import settings
-from django.core.mail import send_mail, EmailMessage
+from django.core.mail import send_mail, EmailMessage, EmailMultiAlternatives
 from django.db import IntegrityError
 import csv
 import StringIO
 from django.http import HttpResponse
 
-# Create your views here.
+
+def envio_mail(inscripto, archivo):
+    htmly = get_template('emails/' + archivo + '.html')
+    origen = 'Movimiento Peregrino <retiros-noreply@movimientoperegrino.org>'
+
+    if archivo == 'inscripcion-titular':
+        asunto = '[MP] Solicitud recibida'
+
+    if archivo == 'inscripcion-suplente':
+        asunto = '[MP] Lista de Espera'
+
+    d = Context({'inscripto': inscripto})
+    html_content = htmly.render(d)
+    msg = EmailMultiAlternatives(asunto, html_content, origen, [inscripto.email])
+    msg.attach_alternative(html_content, 'text/html')
+    msg.send()
+
 
 def inicio(request):
     lista_actividades = Actividad.objects.all()
@@ -22,7 +40,7 @@ def inicio(request):
 
 
 def form_actividad(request):
-    if request.method=='POST':
+    if request.method == 'POST':
         formulario = ActividadForm(request.POST)
         if formulario.is_valid():
             formulario.save()
@@ -72,7 +90,6 @@ def formulario_actividad_view(request, idActividad):
     cantidadPermitida = actividad.cantidadSuplentes + actividad.cantidadTitulares
     cantidadInscriptos = FormularioActividad.objects.filter(actividad=actividad).count()
     if cantidadInscriptos >= cantidadPermitida:
-
         suceso = False
         mensaje = 'El cupo  para "' + actividad.nombre + '" se encuentra lleno.'
         mensaje += ' Si tiene alguna consulta, comuniquese con el encargado de inscripciones al correo: '
@@ -96,15 +113,14 @@ def formulario_actividad_view(request, idActividad):
         if actividad.estado == Actividad.INACTIVO:
             actividad.estado = Actividad.ACTIVO
             actividad.save()
-    #Validacion del IP segun la actividad, excluido para las pruebas
-    """
+
+    
+
     try:
         f = FormularioActividad.objects.get(direccionIP=ip, actividad=actividad)
     except ObjectDoesNotExist:
         ipBoolean = False
-    """
 
-    ipBoolean = False
 
     if request.method=='POST':
         instanciaFormulario = FormularioActividad()
@@ -114,7 +130,6 @@ def formulario_actividad_view(request, idActividad):
         formulario = FormularioActividadForm(request.POST, instance=instanciaFormulario)
 
         if formulario.is_valid():
-
             try:
                 inscripto = formulario.save()
             except IntegrityError:
@@ -130,8 +145,10 @@ def formulario_actividad_view(request, idActividad):
             inscripto.save()
             titulo_mail = 'Inscripcion a "' + actividad.nombre + '"'
             if inscripto.puesto <= actividad.cantidadTitulares:
+                envio_mail(inscripto, 'inscripcion-titular')
                 mensaje_mail = 'Su inscripcion ha sido procesada con exito'
             else:
+                # envio_mail(inscripcion-suplente)
                 mensaje_mail = 'Usted esta en lista de espera'
             destinatario = [inscripto.email]
             send_mail(titulo_mail, mensaje_mail, settings.EMAIL_HOST_USER, destinatario, fail_silently=False)

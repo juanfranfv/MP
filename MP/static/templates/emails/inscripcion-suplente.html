@@ -1,0 +1,15 @@
+{% load i18n %}
+{% load url from future %}
+
+Hola {{ inscripto.nombre }},
+
+<p>Tenemos el agrado de comunicarle que hemos recibido su solicitud para la actividad <strong>{{ inscripto.actividad.nombre }}</strong>.<br />
+Debido a la gran cantidad de personas que se registraron, Usted se encuentra en <strong>lista de espera</strong>.</p>
+
+<p>En el caso que un lugar quede libre una persona se estará comunicando con Usted para avisarle del caso.</p>
+
+<p>Si tienes alguna duda por favor comuníquese con {{ inscripto.actividad.emailContacto }} al correo: {{ inscripto.actividad.emailContacto }}</p>
+
+<p>Muchas Gracias</p>
+
+<strong>Movimiento Peregrino</strong>
