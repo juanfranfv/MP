@@ -210,7 +210,7 @@ def iniciar_sesion(request):
                               context_instance=RequestContext(request))
 
 
-@login_required(login_url='/iniciar_sesion')
+@login_required(login_url='/login')
 def lista_actividades_view(request):
     actividades = Actividad.objects.all()
     return render_to_response(
@@ -219,10 +219,10 @@ def lista_actividades_view(request):
         context_instance=RequestContext(request)
     )
 
-@login_required(login_url='/iniciar_sesion')
+@login_required(login_url='/login')
 def inscriptos_view(request, id_actividad):
     actividad = Actividad.objects.get(pk=id_actividad)
-    lista_inscriptos = FormularioActividad.objects.filter(actividad=actividad)
+    lista_inscriptos = FormularioActividad.objects.filter(actividad=actividad).order_by('puesto')
     return render_to_response(
         'inscriptos.html',
         {'lista_inscriptos': lista_inscriptos, 'actividad': actividad},

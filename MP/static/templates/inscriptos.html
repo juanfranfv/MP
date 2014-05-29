@@ -3,9 +3,10 @@
 {% block encabezado %}Lista de inscriptos a la actividad: {{ actividad }}{% endblock %}
 {% block contenido %}
     <div class="table-responsive">
-        <table class="table">
+        <table class="table table-bordered table-condensed">
             <thead>
                 <tr>
+                    <th>Puesto</th>
                     <th>Nombre</th>
                     <th>Apellido</th>
                     <th>Edad</th>
@@ -29,6 +30,7 @@
             <tbody>
                 {% for inscripto in lista_inscriptos %}
                     <tr>
+                        <td>{{ inscripto.puesto }}</td>
                         <td>{{ inscripto.nombre }}</td>
                         <td>{{ inscripto.apellido }}</td>
                         <td>{{ inscripto.edad }}</td>

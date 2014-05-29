@@ -14,7 +14,7 @@ urlpatterns = patterns('',
     url(r'^formulario/$', 'inscripciones.views.formulario_view', name='vista_formulario'),
     url(r'^lista/$', 'inscripciones.views.lista_inscriptos_view'),
     url(r'^actividad/(?P<idActividad>\d+)/formulario/$', 'inscripciones.views.formulario_actividad_view'),
-    url(r'^iniciar_sesion/$', 'inscripciones.views.iniciar_sesion'),
+    url(r'^login/$', 'inscripciones.views.iniciar_sesion'),
     url(r'^actividades/$', 'inscripciones.views.lista_actividades_view'),
     url(r'^actividades/(?P<id_actividad>\d+)/inscriptos/$', 'inscripciones.views.inscriptos_view'),
 
