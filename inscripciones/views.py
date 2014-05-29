@@ -86,7 +86,7 @@ def formulario_actividad_view(request, idActividad):
 
     ip = get_client_ip(request)
     actividad = Actividad.objects.get(pk=idActividad)
-    ipBoolean = True
+
     cantidadPermitida = actividad.cantidadSuplentes + actividad.cantidadTitulares
     cantidadInscriptos = FormularioActividad.objects.filter(actividad=actividad).count()
     if cantidadInscriptos >= cantidadPermitida:
@@ -102,7 +102,7 @@ def formulario_actividad_view(request, idActividad):
 
     if timezone.now() < actividad.fechaActivacion:
         suceso = False
-        mensaje = 'La inscripcion a "' + actividad.nombre + '" aun no se encuentra habilitada'
+        mensaje = 'La inscripcion a  la actividad "' + actividad.nombre + '" aun no se encuentra habilitada'
         lista_actividades = Actividad.objects.all()
         return render_to_response(
             'home.html',
@@ -114,11 +114,13 @@ def formulario_actividad_view(request, idActividad):
             actividad.estado = Actividad.ACTIVO
             actividad.save()
 
-    
-
-    try:
-        f = FormularioActividad.objects.get(direccionIP=ip, actividad=actividad)
-    except ObjectDoesNotExist:
+    if actividad.controlIP == Actividad.SI:
+        ipBoolean = True
+        try:
+            f = FormularioActividad.objects.get(direccionIP=ip, actividad=actividad)
+        except ObjectDoesNotExist:
+            ipBoolean = False
+    else:
         ipBoolean = False
 
 
@@ -146,12 +148,10 @@ def formulario_actividad_view(request, idActividad):
             titulo_mail = 'Inscripcion a "' + actividad.nombre + '"'
             if inscripto.puesto <= actividad.cantidadTitulares:
                 envio_mail(inscripto, 'inscripcion-titular')
-                mensaje_mail = 'Su inscripcion ha sido procesada con exito'
+
             else:
-                # envio_mail(inscripcion-suplente)
-                mensaje_mail = 'Usted esta en lista de espera'
-            destinatario = [inscripto.email]
-            send_mail(titulo_mail, mensaje_mail, settings.EMAIL_HOST_USER, destinatario, fail_silently=False)
+                envio_mail(inscripto, 'inscripcion-suplente')
+
             suceso = True
             mensaje = 'Su solicitud ha sido procesada con exito'
 
@@ -159,16 +159,25 @@ def formulario_actividad_view(request, idActividad):
                 if actividad.estado == Actividad.ACTIVO:
                     actividad.estado = actividad.FINALIZADO
                     actividad.save()
-                    lista_inscriptos = FormularioActividad.objects.filter(actividad=actividad)
+                    lista_inscriptos = FormularioActividad.objects.filter(actividad=actividad).order_by('puesto')
                     csvfile = StringIO.StringIO()
                     csvwriter = csv.writer(csvfile, delimiter=';')
-                    csvwriter.writerow(['Puesto', 'Nombre', 'Apellido', 'Cedula', 'Telefono', 'Email'])
+                    csvwriter.writerow(['Puesto', 'Nombre', 'Apellido', 'Edad', 'Fecha de Nacimiento',
+                                        'Cedula', 'Telefono', 'Email', 'Colegio/Universidad', 'Curso', 'Sexo',
+                                        'Peregrino que le invito', 'Enfermedades o Alergias', 'Contacto', 'Relacion',
+                                        'Telefono Contacto', 'Dieta Especial', 'Comentarios', 'IP',
+                                        'Fecha de inscripcion'])
                     for inscripto in lista_inscriptos:
                         csvwriter.writerow([inscripto.puesto, inscripto.nombre, inscripto.apellido,
-                                            inscripto.cedula, inscripto.telefono, inscripto.email])
+                                            inscripto.edad, inscripto.fechaNacimiento, inscripto.cedula,
+                                            inscripto.telefono, inscripto.email, inscripto.institucion,
+                                            inscripto.curso, inscripto.get_sexo_display(), inscripto.invitadoPeregrino,
+                                            inscripto.enfermedad, inscripto.contacto, inscripto.relacionContacto,
+                                            inscripto.telefonoContacto, inscripto.alimentacion, inscripto.comentarios,
+                                            inscripto.direccionIP, inscripto.fechaInscripcion])
                     email = EmailMessage('Inscriptos', 'Documento con los inscriptos',
                                          settings.EMAIL_HOST_USER, [actividad.emailContacto])
-                    email.attach('inscriptos.csv', csvfile.getvalue(), 'text/csv')
+                    email.attach('inscriptos-' + actividad.nombre + '.xls', csvfile.getvalue(), 'text/csv')
                     email.send()
             return render_to_response(
                 'home.html',

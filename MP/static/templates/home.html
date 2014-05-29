@@ -11,14 +11,13 @@
         <a href="{% url 'inscripciones.views.formulario_view' %}" class="btn btn-default">Inscribirse al retiro</a>
         <a href="{% url 'inscripciones.views.lista_inscriptos_view' %}" class="btn btn-default">Lista de inscriptos</a>
     -->
-    {% for a in lista_actividades %}
+    {% for actividad in lista_actividades %}
         <div class="list-group">
-            <a href="{% url 'inscripciones.views.formulario_actividad_view' a.id %}" class="list-group-item">
-                <h4>Inscripcion {{ a.nombre }} <small>Haz click aqui para inscribirte</small></h4>
-                <p>{{ a.descripcion }}</p>
+            <a href="{% url 'inscripciones.views.formulario_actividad_view' actividad.id %}" class="list-group-item">
+                <h4>Inscripcion a la actividad: {{ actividad.nombre }} <small>Haz click aqui para inscribirte</small></h4>
+                <p>{{ actividad.descripcion }}</p>
             </a>
         </div>
-
     {% endfor %}
 
 {% endblock %}
