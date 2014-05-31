@@ -11,8 +11,13 @@ class MiForm(models.Model):
             field.widget.attrs['class'] = 'form-control'
 
 class Actividad(models.Model):
+    #Agregar * a campos obligatorios
     nombre = models.CharField(max_length=30)
+    lugar = models.CharField(max_length=50)
     descripcion = models.TextField()
+    requisitos = models.TextField()
+    fechaInicio = models.DateTimeField()
+    fechaFin = models.DateTimeField()
     fechaActivacion = models.DateTimeField()
     fechaCreacion = models.DateTimeField(auto_now=True)
     cantidadTitulares = models.PositiveIntegerField()
