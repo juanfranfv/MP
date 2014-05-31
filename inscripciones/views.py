@@ -122,7 +122,8 @@ def formulario_actividad_view(request, idActividad):
             ipBoolean = False
     else:
         ipBoolean = False
-
+        
+    
 
     if request.method=='POST':
         instanciaFormulario = FormularioActividad()
@@ -132,6 +133,18 @@ def formulario_actividad_view(request, idActividad):
         formulario = FormularioActividadForm(request.POST, instance=instanciaFormulario)
 
         if formulario.is_valid():
+            if actividad.controlCI == Actividad.SI:
+                try:
+                    f = FormularioActividad.objects.get(actividad=actividad)
+                except ObjectDoesNotExist:
+                    suceso = False
+                    mensaje = 'Usted ya se ha inscripto a esta actividad'
+                    return render_to_response(
+                        'home.html',
+                        {'mensaje': mensaje, 'suceso': suceso},
+                        context_instance=RequestContext(request)
+                    )
+            
             try:
                 inscripto = formulario.save()
             except IntegrityError:
