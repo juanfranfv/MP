@@ -7,6 +7,7 @@
         <div class="jumbotron">
             <h2>Descripcion:</h2>
             <p>{{ actividad.descripcion }}</p>
+            <p class="alert alert-info">Los campos que poseen (*) son obligatorios</p>
         </div>
         <div class="col-lg-6 ">
             <form id="formulario" method="post" action="">{% csrf_token %}
