@@ -115,6 +115,7 @@ def formulario_actividad_view(request, idActividad):
             actividad.save()
 
     if actividad.controlIP == Actividad.SI:
+        #Si ipBoolean es True significa que ya se inscribieron con esa IP
         ipBoolean = True
         try:
             f = FormularioActividad.objects.get(direccionIP=ip, actividad=actividad)
@@ -145,6 +146,7 @@ def formulario_actividad_view(request, idActividad):
         if formulario.is_valid():
             if actividad.controlCI == Actividad.SI:
                 cedula = formulario.cleaned_data['cedula']
+                #Si ciBoolean es True significa que ya se inscribieron con esa CI
                 ciBoolean = True
                 print cedula
                 try:
