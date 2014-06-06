@@ -168,7 +168,7 @@ def formulario_actividad_view(request, idActividad):
                 inscripto = formulario.save()
             except IntegrityError:
                 suceso = False
-                mensaje = 'Usted ya se ha inscripto a esta actividad'
+                mensaje = 'ERROR: Usted ya se ha inscripto a esta actividad'
                 return render_to_response(
                     'home.html',
                     {'mensaje': mensaje, 'suceso': suceso},
