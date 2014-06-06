@@ -118,8 +118,18 @@ def formulario_actividad_view(request, idActividad):
         ipBoolean = True
         try:
             f = FormularioActividad.objects.get(direccionIP=ip, actividad=actividad)
+
         except ObjectDoesNotExist:
             ipBoolean = False
+
+        if ipBoolean == True:
+            suceso = False
+            mensaje = 'ERROR: Usted ya se ha inscripto a esta actividad'
+            return render_to_response(
+                'home.html',
+                {'mensaje': mensaje, 'suceso': suceso},
+                context_instance=RequestContext(request)
+            )
     else:
         ipBoolean = False
         
@@ -134,11 +144,18 @@ def formulario_actividad_view(request, idActividad):
 
         if formulario.is_valid():
             if actividad.controlCI == Actividad.SI:
+                cedula = formulario.cleaned_data['cedula']
+                ciBoolean = True
+                print cedula
                 try:
-                    f = FormularioActividad.objects.get(actividad=actividad)
+                    f = FormularioActividad.objects.get(actividad=actividad, cedula=cedula)
+
                 except ObjectDoesNotExist:
+                    ciBoolean = False
+
+                if ciBoolean == True:
                     suceso = False
-                    mensaje = 'Usted ya se ha inscripto a esta actividad'
+                    mensaje = 'ERROR: Usted ya se ha inscripto a esta actividad'
                     return render_to_response(
                         'home.html',
                         {'mensaje': mensaje, 'suceso': suceso},

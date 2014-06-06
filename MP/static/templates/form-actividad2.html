@@ -2,7 +2,7 @@
 {% block encabezado%}Inscripcion a {{ actividad.nombre }}{% endblock %}
 {% block contenido %}
     {% if ipBoolean == True %}
-        <div class="alert alert-danger">Usted ya se ha inscripto a esta actividad</div>
+        <div class="alert alert-danger">ERROR: Usted ya se ha inscripto a esta actividad</div>
     {% else %}
         <!--<div class="jumbotron">
             <h2>Descripcion:</h2>
