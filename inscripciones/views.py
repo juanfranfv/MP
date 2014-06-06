@@ -148,7 +148,6 @@ def formulario_actividad_view(request, idActividad):
                 cedula = formulario.cleaned_data['cedula']
                 #Si ciBoolean es True significa que ya se inscribieron con esa CI
                 ciBoolean = True
-                print cedula
                 try:
                     f = FormularioActividad.objects.get(actividad=actividad, cedula=cedula)
 
