@@ -223,6 +223,147 @@ def formulario_actividad_view(request, idActividad):
         context_instance=RequestContext(request)
     )
 
+def formulario_encuentro_view(request, idActividad):
+    #formulario_actividad
+
+    ip = get_client_ip(request)
+    actividad = Actividad.objects.get(pk=idActividad)
+
+    cantidadPermitida = actividad.cantidadSuplentes + actividad.cantidadTitulares
+    cantidadInscriptos = FormularioEncuentro.objects.filter(actividad=actividad).count()
+    if cantidadInscriptos >= cantidadPermitida:
+        suceso = False
+        mensaje = 'El cupo  para "' + actividad.nombre + '" se encuentra lleno.'
+        mensaje += ' Si tiene alguna consulta, comuniquese con el encargado de inscripciones al correo: '
+        mensaje += actividad.emailContacto
+        return render_to_response(
+            'home.html',
+            {'mensaje': mensaje, 'suceso': suceso},
+            context_instance=RequestContext(request)
+        )
+
+    if timezone.now() < actividad.fechaActivacion:
+        suceso = False
+        mensaje = 'La inscripcion a  la actividad "' + actividad.nombre + '" aun no se encuentra habilitada'
+        lista_actividades = Actividad.objects.all()
+        return render_to_response(
+            'home.html',
+            {'mensaje': mensaje, 'suceso': suceso, 'lista_actividades': lista_actividades},
+            context_instance=RequestContext(request)
+        )
+    else:
+        if actividad.estado == Actividad.INACTIVO:
+            actividad.estado = Actividad.ACTIVO
+            actividad.save()
+
+    if actividad.controlIP == Actividad.SI:
+        #Si ipBoolean es True significa que ya se inscribieron con esa IP
+        ipBoolean = True
+        try:
+            f = FormularioEncuentro.objects.get(direccionIP=ip, actividad=actividad)
+
+        except ObjectDoesNotExist:
+            ipBoolean = False
+
+        if ipBoolean == True:
+            suceso = False
+            mensaje = 'ERROR: Usted ya se ha inscripto a esta actividad'
+            return render_to_response(
+                'home.html',
+                {'mensaje': mensaje, 'suceso': suceso},
+                context_instance=RequestContext(request)
+            )
+    else:
+        ipBoolean = False
+
+
+
+    if request.method=='POST':
+        instanciaFormulario = FormularioEncuentro()
+        instanciaFormulario.actividad = actividad
+        instanciaFormulario.direccionIP = ip
+        instanciaFormulario.puesto = 1000
+        formulario = FormularioEncuentroForm(request.POST, instance=instanciaFormulario)
+
+        if formulario.is_valid():
+            if actividad.controlCI == Actividad.SI:
+                cedula = formulario.cleaned_data['cedula']
+                #Si ciBoolean es True significa que ya se inscribieron con esa CI
+                ciBoolean = True
+                try:
+                    f = FormularioEncuentro.objects.get(actividad=actividad, cedula=cedula)
+
+                except ObjectDoesNotExist:
+                    ciBoolean = False
+
+                if ciBoolean == True:
+                    suceso = False
+                    mensaje = 'ERROR: Usted ya se ha inscripto a esta actividad'
+                    return render_to_response(
+                        'home.html',
+                        {'mensaje': mensaje, 'suceso': suceso},
+                        context_instance=RequestContext(request)
+                    )
+
+            try:
+                inscripto = formulario.save()
+            except IntegrityError:
+                suceso = False
+                mensaje = 'ERROR: Usted ya se ha inscripto a esta actividad'
+                return render_to_response(
+                    'home.html',
+                    {'mensaje': mensaje, 'suceso': suceso},
+                    context_instance=RequestContext(request)
+                )
+            cantidad = FormularioEncuentro.objects.filter(actividad=actividad).filter(pk__lte=inscripto.id).count()
+            inscripto.puesto = cantidad
+            inscripto.save()
+            titulo_mail = 'Inscripcion a "' + actividad.nombre + '"'
+            if inscripto.puesto <= actividad.cantidadTitulares:
+                envio_mail(inscripto, 'inscripcion-titular')
+
+            else:
+                envio_mail(inscripto, 'inscripcion-suplente')
+
+            suceso = True
+            mensaje = 'Su solicitud ha sido procesada con exito'
+
+            if cantidad == cantidadPermitida:
+                if actividad.estado == Actividad.ACTIVO:
+                    actividad.estado = actividad.FINALIZADO
+                    actividad.save()
+                    lista_inscriptos = FormularioEncuentro.objects.filter(actividad=actividad).order_by('puesto')
+                    csvfile = StringIO.StringIO()
+                    csvwriter = csv.writer(csvfile, delimiter=';')
+                    csvwriter.writerow(['Puesto', 'Nombre', 'Apellido', 'Edad', 'Fecha de Nacimiento',
+                                        'Cedula', 'Telefono', 'Email', 'Colegio/Universidad', 'Curso', 'Sexo',
+                                        'Peregrino que le invito', 'Enfermedades o Alergias', 'Contacto', 'Relacion',
+                                        'Telefono Contacto', 'Dieta Especial', 'Comentarios', 'IP',
+                                        'Fecha de inscripcion'])
+                    for inscripto in lista_inscriptos:
+                        csvwriter.writerow([inscripto.puesto, inscripto.nombre.encode('utf8'), inscripto.apellido.encode('utf8'),
+                                            inscripto.edad, inscripto.fechaNacimiento, inscripto.cedula.encode('utf8'),
+                                            inscripto.telefono.encode('utf8'), inscripto.email, inscripto.institucion.encode('utf8'),
+                                            inscripto.curso.encode('utf8'), inscripto.get_sexo_display(), inscripto.invitadoPeregrino.encode('utf8'),
+                                            inscripto.enfermedad.encode('utf8'), inscripto.contacto.encode('utf8'), inscripto.relacionContacto.encode('utf8'),
+                                            inscripto.telefonoContacto.encode('utf8'), inscripto.alimentacion.encode('utf8'), inscripto.comentarios.encode('utf8'),
+                                            inscripto.direccionIP, inscripto.fechaInscripcion])
+                    email = EmailMessage('Inscriptos', 'Documento con los inscriptos',
+                                         settings.EMAIL_HOST_USER, [actividad.emailContacto])
+                    email.attach('inscriptos-' + actividad.nombre + '.csv', csvfile.getvalue(), 'text/csv')
+                    email.send()
+            return render_to_response(
+                'home.html',
+                {'mensaje': mensaje, 'suceso': suceso},
+                context_instance=RequestContext(request)
+            )
+    else:
+        formulario = FormularioEncuentroForm()
+    return render_to_response(
+        'form-actividad2.html',
+        {'formulario': formulario, 'ipBoolean': ipBoolean, 'actividad': actividad},
+        context_instance=RequestContext(request)
+    )
 def iniciar_sesion(request):
 
     if request.method == 'POST':

@@ -13,32 +13,14 @@
     -->
     <div class="row">
     {% for actividad in lista_actividades %}
-        <!--
-        <div class="row">
-            <div class="col-md-12">
-                <h2>{{ actividad.nombre }}</h2>
-                <h4>Fecha de Inicio:</h4>
-                <p>{{ actividad.fechaInicio }}</p>
-                <h4>Fecha de Fin:</h4>
-                <p>{{ actividad.fechaFin }}</p>
-                <h4>Lugar</h4>
-                <p>{{ actividad.lugar }}</p>
-                <h4>Costo</h4>
-                <p>200.000 Gs.</p>
-                <h4>Requisitos</h4>
-                <p>{{ actividad.requisitos }}</p>
-                {% if actividad.descripcion != '' %}
-                    <h4>Descripcion</h4>
-                    <p>{{ actividad.descripcion }}</p>
-                {% endif %}
-                <p><a class="btn btn-info" href="{% url 'inscripciones.views.formulario_actividad_view' actividad.id %}">Inscribirse</a></p>
-            </div>
-        </div>
-        -->
 
         <div class="col-md-12">
         <div class="list-group">
+            {% if actividad.encuentro == 'NO' %}
             <a href="{% url 'inscripciones.views.formulario_actividad_view' actividad.id %}" class="list-group-item">
+            {% else %}
+            <a href="{% url 'inscripciones.views.formulario_encuentro_view' actividad.id %}" class="list-group-item">
+            {% endif %}
                 <h3>Inscripcion a la actividad: {{ actividad.nombre }} <small>Haz click aqui para inscribirte</small></h3>
                 <dl class="dl-horizontal">
                     <dt>Fecha de Inicio</dt>

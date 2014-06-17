@@ -35,3 +35,12 @@ class FormularioActividadForm(MyForm):
         widgets = {
             'sexo': Select(choices=FormularioActividad.SEXO_OPCIONES),
         }
+
+class FormularioEncuentroForm(MyForm):
+
+    class Meta:
+        model = FormularioEncuentro
+        exclude = ['direccionIP', 'fechaInscripcion', 'actividad', 'puesto']
+        widgets = {
+            'sexo': Select(choices=FormularioActividad.SEXO_OPCIONES),
+        }

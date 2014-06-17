@@ -40,6 +40,7 @@ class Actividad(models.Model):
         (SI, 'Si'),
         (NO, 'No'),
     )
+    encuentro = models.CharField(max_length=2, choices=CONTROL_OPCIONES, default=NO, verbose_name='Retiro de encuentro')
     controlIP = models.CharField(max_length=2, choices=CONTROL_OPCIONES, default=NO, verbose_name='Control de IP')
     controlCI = models.CharField(max_length=2, choices=CONTROL_OPCIONES, default=NO, verbose_name='Control de CI')
     #usuario_creacion = models.ForeignKey('usuario')
@@ -65,7 +66,7 @@ class Formulario(models.Model):
     def __unicode__(self):
         return self.nombre
 
-class FormularioActividad(models.Model):
+class FormularioEncuentro(models.Model):
     MASCULINO = 'M'
     FEMENINO = 'F'
     SEXO_OPCIONES = (
@@ -84,6 +85,47 @@ class FormularioActividad(models.Model):
     curso = models.CharField(max_length=100, blank=True)
     sexo = models.CharField(max_length=1, choices=SEXO_OPCIONES, verbose_name="Sexo (*)")
     invitadoPeregrino = models.CharField(max_length=100, verbose_name="Peregrino que te invito", blank=True)
+    enfermedad = models.TextField(verbose_name="Enfermedad/Alergias", blank=True)
+    contacto = models.CharField(max_length=50, verbose_name='Nombre de Contacto (*)')
+    telefonoContacto = models.CharField(max_length=50, verbose_name='Telefono Contacto (*)')
+    relacionContacto = models.CharField(max_length=50, verbose_name='Relacion con Contacto (*)')
+    alimentacion = models.TextField(verbose_name="Dieta Especial", blank=True)
+    comentarios = models.TextField(blank=True)
+    direccionIP = models.IPAddressField()
+    fechaInscripcion = models.DateTimeField(auto_now_add=True)
+    actividad = models.ForeignKey(Actividad, blank=True, null=True)
+    puesto = models.PositiveIntegerField()
+
+    def validIp(self):
+        return True
+
+    def fechaNacimientoCorrectFormat(self):
+        return str(self.fechaNacimiento.day) + '/' + str(self.fechaNacimiento.month) + '/' + str(self.fechaNacimiento.year)
+
+    def __unicode__(self):
+        return self.nombre
+
+
+class FormularioActividad(models.Model):
+    MASCULINO = 'M'
+    FEMENINO = 'F'
+    SEXO_OPCIONES = (
+        (MASCULINO, 'Masculino'),
+        (FEMENINO, 'Femenino')
+    )
+
+    nombre = models.CharField(max_length=100, verbose_name="Nombre (*)")
+    apellido = models.CharField(max_length=100, verbose_name="Apellido (*)")
+    cedula = models.CharField(max_length=30, verbose_name="Cedula (*)")
+    telefono = models.CharField(max_length=30, verbose_name="Telefono (*)")
+    email = models.EmailField(verbose_name="Email (*)")
+    edad = models.PositiveIntegerField(verbose_name="Edad")
+    fechaNacimiento = models.DateField(verbose_name="Fecha de Nacimiento (*)", help_text="Formato: dd/mm/aaaa")
+    fechaRetiroEncuetro = models.DateField("Fecha de Retiro de Encuentro (*)")
+    coordinador = models.CharField(max_length=100, verbose_name="Coordinador de Retiro de Encuentro")
+    institucion = models.CharField(max_length=100, verbose_name="Colegio/Universidad (*)",)
+    curso = models.CharField(max_length=100, blank=True)
+    sexo = models.CharField(max_length=1, choices=SEXO_OPCIONES, verbose_name="Sexo (*)")
     enfermedad = models.TextField(verbose_name="Enfermedad/Alergias", blank=True)
     contacto = models.CharField(max_length=50, verbose_name='Nombre de Contacto (*)')
     telefonoContacto = models.CharField(max_length=50, verbose_name='Telefono Contacto (*)')
