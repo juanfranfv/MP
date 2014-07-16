@@ -2,7 +2,7 @@
 {% block titulo %}Movimiento Peregrino{% endblock %}
 {% block encabezado %}Lista de inscriptos a la actividad: {{ actividad }}{% endblock %}
 {% block contenido %}
-    <div class="table-responsive pre-scrollable col-lg-12">
+    <div class="table-responsive pre-scrollable">
         <table class="table">
             <thead>
                 <tr>
@@ -17,8 +17,7 @@
                     <th>Colegio/Universidad</th>
                     <th>Curso</th>
                     <th>Sexo</th>
-                    <th>Fecha de Retiro Encuentro</th>
-                    <th>Coordinador</th>
+                    <th>Peregrino que te invito</th>
                     <th>Enfermedad/Alergia</th>
                     <th>Contacto</th>
                     <th>Telefono Contacto</th>
@@ -43,8 +42,7 @@
                         <td>{{ inscripto.institucion }}</td>
                         <td>{{ inscripto.curso }}</td>
                         <td>{{ inscripto.get_sexo_display }}</td>
-                        <td>{{ inscripto.fechaRetiroEncuetro }}</td>
-                        <td>{{ inscripto.coordinador }}</td>
+                        <td>{{ inscripto.invitadoPeregrino }}</td>
                         <td>{{ inscripto.enfermedad }}</td>
                         <td>{{ inscripto.contacto }}</td>
                         <td>{{ inscripto.telefonoContacto }}</td>
