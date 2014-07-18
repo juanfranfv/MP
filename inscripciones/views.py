@@ -34,7 +34,7 @@ def envio_mail(inscripto, archivo):
 
 
 def inicio(request):
-    lista_actividades = Actividad.objects.all().order_by('fechaActivacion')
+    lista_actividades = Actividad.objects.all().order_by('fechaInicio').reverse()
 
     return render_to_response('home.html', {'lista_actividades': lista_actividades}, context_instance=RequestContext(request))
 
