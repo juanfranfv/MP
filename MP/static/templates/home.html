@@ -30,12 +30,12 @@
                     <dt>Lugar</dt>
                     <dd>{{ actividad.lugar }}</dd>
                     <dt>Costo</dt>
-                    <dd>200.000 Gs.</dd>
+                    <dd>{{ actividad.costo }}</dd>
                     <dt>Requisitos</dt>
-                    <dd>{{ actividad.requisitos }}</dd>
+                    <dd>{{ actividad.requisitos | linebreaks }}</dd>
                     {% if actividad.descripcion != '' %}
                     <dt>Descripcion</dt>
-                    <dd>{{ actividad.descripcion }}</dd>
+                    <dd>{{ actividad.descripcion | linebreaks }}</dd>
 
                     {% endif %}
                     <dt>Fecha de habilitacion:</dt>

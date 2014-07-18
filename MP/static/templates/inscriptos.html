@@ -2,6 +2,7 @@
 {% block titulo %}Movimiento Peregrino{% endblock %}
 {% block encabezado %}Lista de inscriptos a la actividad: {{ actividad }}{% endblock %}
 {% block contenido %}
+    <a href="{% url 'inscripciones.views.csv_view' actividad.id %}" class="btn btn-default">Descargar csv</a>
     <div class="table-responsive pre-scrollable col-lg-12">
         <table class="table">
             <thead>

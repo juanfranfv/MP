@@ -18,5 +18,6 @@ urlpatterns = patterns('',
     url(r'^login/$', 'inscripciones.views.iniciar_sesion'),
     url(r'^actividades/$', 'inscripciones.views.lista_actividades_view'),
     url(r'^actividades/(?P<id_actividad>\d+)/inscriptos/$', 'inscripciones.views.inscriptos_view'),
+    url(r'^actividades/(?P<id_actividad>\d+)/inscriptos/csv/$', 'inscripciones.views.csv_view'),
 
 )

@@ -2,7 +2,7 @@ from django.shortcuts import render, render_to_response, HttpResponseRedirect, R
 from forms import *
 from models import *
 from django.core.exceptions import *
-from django.template import Context
+from django.template import Context, loader
 from django.template.loader import get_template
 from django.utils import timezone
 from django.contrib.auth.forms import AuthenticationForm
@@ -34,7 +34,7 @@ def envio_mail(inscripto, archivo):
 
 
 def inicio(request):
-    lista_actividades = Actividad.objects.all()
+    lista_actividades = Actividad.objects.all().order_by('fechaActivacion')
 
     return render_to_response('home.html', {'lista_actividades': lista_actividades}, context_instance=RequestContext(request))
 
@@ -402,11 +402,66 @@ def inscriptos_view(request, id_actividad):
     if actividad.encuentro == Actividad.SI:
         html = 'inscriptos-encuentro.html'
         lista_inscriptos = FormularioEncuentro.objects.filter(actividad=actividad).order_by('puesto')
+
+
+
     else:
         html = 'inscriptos.html'
         lista_inscriptos = FormularioActividad.objects.filter(actividad=actividad).order_by('puesto')
+
     return render_to_response(
         html,
         {'lista_inscriptos': lista_inscriptos, 'actividad': actividad},
         context_instance=RequestContext(request)
     )
+
+
+def csv_view(request, id_actividad):
+
+    actividad = Actividad.objects.get(pk=id_actividad)
+    response = HttpResponse(content_type='text/csv')
+    response['Content-Disposition'] = 'attachment; filename="inscriptos.csv"'
+
+    writer = csv.writer(response, delimiter=';')
+
+    if actividad.encuentro == Actividad.SI:
+        #csvwriter = csv.writer(csvfile, delimiter=';')
+        lista_inscriptos = FormularioEncuentro.objects.filter(actividad=actividad).order_by('puesto')
+        writer.writerow(['Puesto', 'Nombre', 'Apellido', 'Edad', 'Fecha de Nacimiento',
+                            'Cedula', 'Telefono', 'Email', 'Colegio/Universidad', 'Curso', 'Sexo',
+                            'Peregrino que le invito', 'Enfermedades o Alergias', 'Contacto', 'Relacion',
+                            'Telefono Contacto', 'Dieta Especial', 'Comentarios', 'IP',
+                            'Fecha de inscripcion'])
+        for inscripto in lista_inscriptos:
+            writer.writerow([inscripto.puesto, inscripto.nombre.encode('utf-8'), inscripto.apellido.encode('utf-8'),
+                                inscripto.edad, inscripto.fechaNacimiento, inscripto.cedula.encode('utf-8'),
+                                inscripto.telefono.encode('utf-8'), inscripto.email, inscripto.institucion.encode('utf-8'),
+                                inscripto.curso.encode('utf-8'), inscripto.get_sexo_display(), inscripto.invitadoPeregrino.encode('utf-8'),
+                                inscripto.enfermedad.encode('utf-8'), inscripto.contacto.encode('utf-8'), inscripto.relacionContacto.encode('utf-8'),
+                                inscripto.telefonoContacto.encode('utf-8'), inscripto.alimentacion.encode('utf-8'), inscripto.comentarios.encode('utf-8'),
+                                inscripto.direccionIP, inscripto.fechaInscripcion])
+
+
+    else:
+        lista_inscriptos = FormularioActividad.objects.filter(actividad=actividad).order_by('puesto')
+        #csvfile = StringIO.StringIO()
+        #csvwriter = csv.writer(csvfile, delimiter=';')
+        writer.writerow(['Puesto', 'Nombre', 'Apellido', 'Edad', 'Fecha de Nacimiento',
+                            'Cedula', 'Telefono', 'Email', 'Colegio/Universidad', 'Curso', 'Sexo',
+                            'Fecha de Retiro Encuentro', 'Coordinador', 'Enfermedades o Alergias', 'Contacto',
+                            'Relacion', 'Telefono Contacto', 'Dieta Especial', 'Comentarios', 'IP',
+                            'Fecha de inscripcion'])
+        for inscripto in lista_inscriptos:
+            writer.writerow([inscripto.puesto, inscripto.nombre.encode('utf-8'), inscripto.apellido.encode('utf-8'),
+                                inscripto.edad, inscripto.fechaNacimiento, inscripto.cedula.encode('utf8'),
+                                inscripto.telefono.encode('utf-8'), inscripto.email, inscripto.institucion.encode('utf-8'),
+                                inscripto.curso.encode('utf-8'), inscripto.get_sexo_display(), inscripto.fechaRetiroEncuetro,
+                                inscripto.coordinador.encode('utf-8'), inscripto.enfermedad.encode('utf-8'),
+                                inscripto.contacto.encode('utf-8'), inscripto.relacionContacto.encode('utf-8'),
+                                inscripto.telefonoContacto.encode('utf-8'), inscripto.alimentacion.encode('utf-8'),
+                                inscripto.comentarios.encode('utf-8'),
+                                inscripto.direccionIP, inscripto.fechaInscripcion])
+
+
+
+    return response
