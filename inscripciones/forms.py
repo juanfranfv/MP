@@ -4,7 +4,7 @@ from django.forms import Select
 from inscripciones.models import *
 from django.forms.extras.widgets import SelectDateWidget
 from django.contrib.admin.widgets import AdminDateWidget
-
+from datetimewidget.widgets import DateTimeWidget
 forms.DateInput.input_type = "date"
 
 class MyForm(forms.ModelForm):
@@ -17,9 +17,14 @@ class MyForm(forms.ModelForm):
             field.widget.attrs['class'] = 'form-control'
 
 
-class ActividadForm(forms.ModelForm):
+class ActividadForm(MyForm):
     class Meta:
         model = Actividad
+        widgets = {
+            'fechaInicio': DateTimeWidget(attrs={'id': "id_fechaInicio"}, usel10n=True),
+            'fechaFin': DateTimeWidget(attrs={'id': "id_fechaInicio"}, usel10n=True),
+            'fechaActivacion': DateTimeWidget(attrs={'id': "id_fechaInicio"}, usel10n=True),
+        }
 
 
 class FormularioForm(MyForm):

@@ -17,7 +17,11 @@ urlpatterns = patterns('',
     url(r'^actividad/(?P<idActividad>\d+)/form/$', 'inscripciones.views.formulario_encuentro_view'),
     url(r'^login/$', 'inscripciones.views.iniciar_sesion'),
     url(r'^actividades/$', 'inscripciones.views.lista_actividades_view'),
+    url(r'^actividades/nueva/$', 'inscripciones.views.agregar_actividad_view'),
+    url(r'^actividades/(?P<id_actividad>\d+)/editar/$', 'inscripciones.views.editar_actividad_view'),
     url(r'^actividades/(?P<id_actividad>\d+)/inscriptos/$', 'inscripciones.views.inscriptos_view'),
     url(r'^actividades/(?P<id_actividad>\d+)/inscriptos/csv/$', 'inscripciones.views.csv_view'),
+    url(r'^actividades/(?P<id_actividad>\d+)/eliminar/$', 'inscripciones.views.eliminar_actividad_view'),
+    url(r'^actividades/(?P<id_actividad>\d+)/eliminada/$', 'inscripciones.views.actividad_eliminada_view'),
 
 )

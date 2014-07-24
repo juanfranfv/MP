@@ -4,11 +4,6 @@
     {% if ipBoolean == True %}
         <div class="alert alert-danger">ERROR: Usted ya se ha inscripto a esta actividad</div>
     {% else %}
-        <!--<div class="jumbotron">
-            <h2>Descripcion:</h2>
-            <p>{{ actividad.descripcion }}</p>
-        </div>
-        -->
         <div class="alert alert-info">Los campos que poseen (*) son obligatorios</div>
         <form id="formulario" method="post" action="">{% csrf_token %}
             <table class="table">

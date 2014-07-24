@@ -1,4 +1,4 @@
-from django.shortcuts import render, render_to_response, HttpResponseRedirect, RequestContext
+from django.shortcuts import render, render_to_response, HttpResponseRedirect, RequestContext, Http404
 from forms import *
 from models import *
 from django.core.exceptions import *
@@ -34,7 +34,7 @@ def envio_mail(inscripto, archivo):
 
 
 def inicio(request):
-    lista_actividades = Actividad.objects.all().order_by('fechaInicio').reverse()
+    lista_actividades = Actividad.objects.all().order_by('fechaActivacion').reverse()
 
     return render_to_response('home.html', {'lista_actividades': lista_actividades}, context_instance=RequestContext(request))
 
@@ -53,6 +53,7 @@ def form_actividad(request):
         context_instance=RequestContext(request)
     )
 
+
 def formulario_view(request):
     if request.method=='POST':
         #formularioMod = Formulario(Direccion_ip= request.META.get('REMOTE_ADDR'))
@@ -69,9 +70,11 @@ def formulario_view(request):
         {'formulario': formularioForm},
         context_instance=RequestContext(request))
 
+
 def lista_inscriptos_view(request):
     lista_inscriptos = Formulario.objects.all()
     return render_to_response('lista.html', {'lista_inscriptos':lista_inscriptos}, context_instance=RequestContext(request))
+
 
 def get_client_ip(request):
     x_forwarded_for = request.META.get('HTTP_X_FORWARDED_FOR')
@@ -81,12 +84,26 @@ def get_client_ip(request):
         ip = request.META.get('REMOTE_ADDR')
     return ip
 
+
 def formulario_actividad_view(request, idActividad):
     #formulario_actividad
 
     ip = get_client_ip(request)
     actividad = Actividad.objects.get(pk=idActividad)
 
+    #si el estado de la actividad es finalizado, termina la inscripcion
+    if actividad.estado == Actividad.FINALIZADO:
+        suceso = False
+        mensaje = 'La inscripcion a la actividad: "' + actividad.nombre + '" ha finalizado.'
+        mensaje += ' Si tiene alguna consulta, comuniquese con el encargado de inscripciones al correo: '
+        mensaje += actividad.emailContacto
+        return render_to_response(
+            'home.html',
+            {'mensaje': mensaje, 'suceso': suceso},
+            context_instance=RequestContext(request)
+        )
+
+    #se controla la cantidad de inscriptos
     cantidadPermitida = actividad.cantidadSuplentes + actividad.cantidadTitulares
     cantidadInscriptos = FormularioActividad.objects.filter(actividad=actividad).count()
     if cantidadInscriptos >= cantidadPermitida:
@@ -100,6 +117,7 @@ def formulario_actividad_view(request, idActividad):
             context_instance=RequestContext(request)
         )
 
+    #se controla la fecha/hora de activacion
     if timezone.now() < actividad.fechaActivacion:
         suceso = False
         mensaje = 'La inscripcion a  la actividad "' + actividad.nombre + '" aun no se encuentra habilitada'
@@ -114,6 +132,7 @@ def formulario_actividad_view(request, idActividad):
             actividad.estado = Actividad.ACTIVO
             actividad.save()
 
+    #se verifica la ip
     if actividad.controlIP == Actividad.SI:
         #Si ipBoolean es True significa que ya se inscribieron con esa IP
         ipBoolean = True
@@ -135,7 +154,7 @@ def formulario_actividad_view(request, idActividad):
         ipBoolean = False
         
     
-
+    #se procesa el POST
     if request.method=='POST':
         instanciaFormulario = FormularioActividad()
         instanciaFormulario.actividad = actividad
@@ -225,11 +244,23 @@ def formulario_actividad_view(request, idActividad):
         context_instance=RequestContext(request)
     )
 
+
 def formulario_encuentro_view(request, idActividad):
     #formulario_actividad
 
     ip = get_client_ip(request)
     actividad = Actividad.objects.get(pk=idActividad)
+
+    if actividad.estado == Actividad.FINALIZADO:
+        suceso = False
+        mensaje = 'La inscripcion a la actividad: "' + actividad.nombre + '" ha finalizado.'
+        mensaje += ' Si tiene alguna consulta, comuniquese con el encargado de inscripciones al correo: '
+        mensaje += actividad.emailContacto
+        return render_to_response(
+            'home.html',
+            {'mensaje': mensaje, 'suceso': suceso},
+            context_instance=RequestContext(request)
+        )
 
     cantidadPermitida = actividad.cantidadSuplentes + actividad.cantidadTitulares
     cantidadInscriptos = FormularioEncuentro.objects.filter(actividad=actividad).count()
@@ -280,7 +311,7 @@ def formulario_encuentro_view(request, idActividad):
 
 
 
-    if request.method=='POST':
+    if request.method == 'POST':
         instanciaFormulario = FormularioEncuentro()
         instanciaFormulario.actividad = actividad
         instanciaFormulario.direccionIP = ip
@@ -298,7 +329,7 @@ def formulario_encuentro_view(request, idActividad):
                 except ObjectDoesNotExist:
                     ciBoolean = False
 
-                if ciBoolean == True:
+                if ciBoolean:
                     suceso = False
                     mensaje = 'ERROR: Usted ya se ha inscripto a esta actividad'
                     return render_to_response(
@@ -368,8 +399,11 @@ def formulario_encuentro_view(request, idActividad):
         {'formulario': formulario, 'ipBoolean': ipBoolean, 'actividad': actividad},
         context_instance=RequestContext(request)
     )
-def iniciar_sesion(request):
 
+
+def iniciar_sesion(request):
+    if not request.user.is_anonymous():
+        return HttpResponseRedirect('/actividades')
     if request.method == 'POST':
         formulario = AuthenticationForm(request.POST)
         if formulario.is_valid:
@@ -388,12 +422,13 @@ def iniciar_sesion(request):
 
 @login_required(login_url='/login')
 def lista_actividades_view(request):
-    actividades = Actividad.objects.all()
+    actividades = Actividad.objects.all().order_by('fechaActivacion').reverse()
     return render_to_response(
         'lista_actividades.html',
         {'lista_actividades': actividades},
         context_instance=RequestContext(request)
     )
+
 
 @login_required(login_url='/login')
 def inscriptos_view(request, id_actividad):
@@ -416,6 +451,7 @@ def inscriptos_view(request, id_actividad):
     )
 
 
+@login_required(login_url='/login')
 def csv_view(request, id_actividad):
 
     actividad = Actividad.objects.get(pk=id_actividad)
@@ -465,3 +501,70 @@ def csv_view(request, id_actividad):
 
 
     return response
+
+
+@login_required(login_url='/login')
+def agregar_actividad_view(request):
+    if request.method == 'POST':
+        formulario = ActividadForm(request.POST)
+
+        if formulario.is_valid():
+            formulario.save()
+            return HttpResponseRedirect('/login')
+    else:
+        formulario = ActividadForm()
+    return render_to_response(
+        'form-actividad-nueva.html',
+        {'formulario': formulario},
+        context_instance=RequestContext(request)
+    )
+
+
+@login_required(login_url='/login')
+def editar_actividad_view(request, id_actividad):
+    try:
+        actividad = Actividad.objects.get(pk=id_actividad)
+    except Actividad.DoesNotExist:
+        raise Http404
+    if request.method == 'POST':
+        formulario = ActividadForm(request.POST, instance=actividad)
+        if formulario.is_valid():
+            formulario.save()
+            return HttpResponseRedirect('/actividades')
+
+    else:
+        formulario = ActividadForm(instance=actividad)
+    return render_to_response(
+        'form-actividad-nueva.html',
+        {'formulario': formulario},
+        context_instance=RequestContext(request)
+    )
+
+
+@login_required(login_url='/login')
+def eliminar_actividad_view(request, id_actividad):
+    try:
+        actividad = Actividad.objects.get(pk=id_actividad)
+    except Actividad.DoesNotExist:
+        raise Http404
+    return render_to_response(
+        'eliminar-actividad.html',
+        {'actividad': actividad},
+        context_instance=RequestContext(request)
+    )
+
+
+@login_required(login_url='/login')
+def actividad_eliminada_view(request, id_actividad):
+    try:
+        actividad = Actividad.objects.get(pk=id_actividad)
+    except Actividad.DoesNotExist:
+        raise Http404
+    mensaje = "La actividad " + actividad.nombre + " ha sido eliminada con exito."
+    actividad.delete()
+    actividades = Actividad.objects.all().order_by('fechaActivacion').reverse()
+    return render_to_response(
+        'lista_actividades.html',
+        {'mensaje': mensaje, 'lista_actividades': actividades},
+        context_instance=RequestContext(request)
+    )
