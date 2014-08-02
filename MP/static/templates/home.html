@@ -7,44 +7,43 @@
     {% elif suceso == False %}
         <div class="alert alert-danger">{{ mensaje }}</div>
     {% endif %}
+
     <!--
         <a href="{% url 'inscripciones.views.formulario_view' %}" class="btn btn-default">Inscribirse al retiro</a>
         <a href="{% url 'inscripciones.views.lista_inscriptos_view' %}" class="btn btn-default">Lista de inscriptos</a>
     -->
-    <div class="row">
+    <ul class="list-group">
     {% for actividad in lista_actividades %}
-
-        <div class="col-md-12">
-        <div class="list-group">
+        <li class="list-group-item">
+            <h3>Inscripcion a la actividad: {{ actividad.nombre }}</h3>
+            <dl class="dl-horizontal">
+                <dt>Fecha de Inicio</dt>
+                <dd>{{ actividad.fechaInicio }}</dd>
+                <dt>Fecha de Fin</dt>
+                <dd>{{ actividad.fechaFin }}</dd>
+                <dt>Lugar</dt>
+                <dd>{{ actividad.lugar }}</dd>
+                <dt>Costo</dt>
+                <dd>{{ actividad.costo }}</dd>
+                {% if actividad.descripcion != '' %}
+                <dt>Descripcion</dt>
+                <dd>{{ actividad.descripcion | linebreaks }}</dd>
+                {% endif %}
+                <dt>Fecha de habilitacion:</dt>
+                <dd>{{ actividad.fechaActivacion }}</dd>
+            </dl>
+            <div class="alert alert-danger"><b>Requisitos:</b>{{ actividad.requisitos | linebreaks }}</div>
             {% if actividad.encuentro == 'NO' %}
-            <a href="{% url 'inscripciones.views.formulario_actividad_view' actividad.id %}" class="list-group-item">
-            {% else %}
-            <a href="{% url 'inscripciones.views.formulario_encuentro_view' actividad.id %}" class="list-group-item">
-            {% endif %}
-                <h3>Inscripcion a la actividad: {{ actividad.nombre }} <small>Haz click aqui para inscribirte</small></h3>
-                <dl class="dl-horizontal">
-                    <dt>Fecha de Inicio</dt>
-                    <dd>{{ actividad.fechaInicio }}</dd>
-                    <dt>Fecha de Fin</dt>
-                    <dd>{{ actividad.fechaFin }}</dd>
-                    <dt>Lugar</dt>
-                    <dd>{{ actividad.lugar }}</dd>
-                    <dt>Costo</dt>
-                    <dd>{{ actividad.costo }}</dd>
-                    <dt>Requisitos</dt>
-                    <dd>{{ actividad.requisitos | linebreaks }}</dd>
-                    {% if actividad.descripcion != '' %}
-                    <dt>Descripcion</dt>
-                    <dd>{{ actividad.descripcion | linebreaks }}</dd>
-
-                    {% endif %}
-                    <dt>Fecha de habilitacion:</dt>
-                    <dd>{{ actividad.fechaActivacion }}</dd>
-                </dl>
+            <a href="{% url 'inscripciones.views.formulario_actividad_view' actividad.id %}" class="btn btn-default">
+                Inscribirse
             </a>
-        </div>
-        </div>
-
+            {% else %}
+            <a href="{% url 'inscripciones.views.formulario_encuentro_view' actividad.id %}" class="btn btn-default">
+                Inscribirse
+            </a>
+            {% endif %}
+        </li>
     {% endfor %}
-    </div>
+    </ul>
+
 {% endblock %}
