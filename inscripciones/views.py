@@ -420,14 +420,27 @@ def iniciar_sesion(request):
                               context_instance=RequestContext(request))
 
 
+def cerrar_sesion(request):
+    logout(request)
+    return HttpResponseRedirect('/login')
+
+
 @login_required(login_url='/login')
 def lista_actividades_view(request):
-    actividades = Actividad.objects.all().order_by('fechaActivacion').reverse()
-    return render_to_response(
-        'lista_actividades.html',
-        {'lista_actividades': actividades},
-        context_instance=RequestContext(request)
-    )
+    if request.user.is_superuser:
+        actividades = Actividad.objects.all().order_by('fechaActivacion').reverse()
+        return render_to_response(
+            'lista_actividades.html',
+            {'lista_actividades': actividades},
+            context_instance=RequestContext(request)
+        )
+    else:
+        actividades = Actividad.objects.all().order_by('fechaActivacion').reverse()
+        return render_to_response(
+            'lista_actividades2.html',
+            {'lista_actividades': actividades},
+            context_instance=RequestContext(request)
+        )
 
 
 @login_required(login_url='/login')
@@ -513,9 +526,11 @@ def agregar_actividad_view(request):
             return HttpResponseRedirect('/login')
     else:
         formulario = ActividadForm()
+
+    titulo = 'Nueva actividad'
     return render_to_response(
         'form-actividad-nueva.html',
-        {'formulario': formulario},
+        {'formulario': formulario, 'titulo': titulo},
         context_instance=RequestContext(request)
     )
 
@@ -534,9 +549,11 @@ def editar_actividad_view(request, id_actividad):
 
     else:
         formulario = ActividadForm(instance=actividad)
+
+    titulo = 'Editar actividad: ' + actividad.nombre
     return render_to_response(
         'form-actividad-nueva.html',
-        {'formulario': formulario},
+        {'formulario': formulario, 'titulo': titulo},
         context_instance=RequestContext(request)
     )
 

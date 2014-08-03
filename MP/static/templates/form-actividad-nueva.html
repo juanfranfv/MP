@@ -17,7 +17,7 @@
         <div class="header">
             <ul class="nav navbar-nav pull-right">
                 <li class="active"><a href="/">Inicio</a></li>
-                <li><a href="#">Contacto</a></li>
+                <li><a href="/logout">Cerrar sesion</a></li>
             </ul>
 
             <h3 class="text-muted">MP</h3>
@@ -33,7 +33,7 @@
                                 </a>
                                 <div class="media-body">
                                     <br>
-                                    <h1 class="media-heading">{% block encabezado %} {% endblock %}</h1>
+                                    <h2 class="media-heading">{% block encabezado %} {{ titulo }} {% endblock %}</h2>
                                 </div>
                             </div>
 

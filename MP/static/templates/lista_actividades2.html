@@ -2,7 +2,6 @@
 {% block titulo %}Movimiento Peregrino{% endblock %}
 {% block encabezado %}
     Actividades del Movimiento Peregrino
-    <a class="btn btn-default" href="/actividades/nueva">Agregar actividad</a>
 {% endblock %}
 {% block navbar %}
     <li><a href="/logout">Cerrar sesion</a></li>
@@ -16,8 +15,6 @@
         <li class="list-group-item">
             <h4>Lista de inscriptos: {{ actividad.nombre }}</h4>
             <a href="{% url 'inscripciones.views.inscriptos_view' actividad.id %}" class="btn btn-info">Inscriptos</a>
-            <a class="btn btn-info" href="/actividades/{{ actividad.id }}/editar">Editar actividad</a>
-            <a class="btn btn-danger" href="/actividades/{{ actividad.id }}/eliminar">Eliminar actividad</a>
         </li>
     {% endfor %}
     </ul>
