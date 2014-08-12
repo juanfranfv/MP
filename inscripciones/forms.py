@@ -21,9 +21,9 @@ class ActividadForm(MyForm):
     class Meta:
         model = Actividad
         widgets = {
-            'fechaInicio': DateTimeWidget(attrs={'id': "id_fechaInicio"}, usel10n=True),
-            'fechaFin': DateTimeWidget(attrs={'id': "id_fechaInicio"}, usel10n=True),
-            'fechaActivacion': DateTimeWidget(attrs={'id': "id_fechaInicio"}, usel10n=True),
+            'fechaInicio': DateTimeWidget(attrs={'id': "id_fechaInicio"}, usel10n=True, bootstrap_version=3),
+            'fechaFin': DateTimeWidget(attrs={'id': "id_fechaInicio"}, usel10n=True, bootstrap_version=3),
+            'fechaActivacion': DateTimeWidget(attrs={'id': "id_fechaInicio"}, usel10n=True, bootstrap_version=3),
         }
 
 
