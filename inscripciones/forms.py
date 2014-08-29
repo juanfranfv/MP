@@ -1,4 +1,6 @@
-__author__ = 'jf'
+# -*- encoding: utf-8 -*-
+
+#__author__ = 'jf'
 from django import forms
 from django.forms import Select
 from inscripciones.models import *
@@ -6,6 +8,7 @@ from django.forms.extras.widgets import SelectDateWidget
 from django.contrib.admin.widgets import AdminDateWidget
 from datetimewidget.widgets import DateTimeWidget
 forms.DateInput.input_type = "date"
+
 
 class MyForm(forms.ModelForm):
 
@@ -32,7 +35,24 @@ class FormularioForm(MyForm):
         model = Formulario
         #exclude = ['Direccion_ip', 'Fecha_inscripcion', 'Actividad']
 
+
 class FormularioActividadForm(MyForm):
+    REMERA_OPCIONES = (
+        ('P', 'P'),
+        ('M', 'M'),
+        ('G', 'G'),
+        ('XG', 'XG'),
+    )
+
+    AUTO_OPCIONES = (
+        ('Si', 'Si'),
+        ('No', 'No'),
+    )
+    remera = forms.ChoiceField(choices=REMERA_OPCIONES, label="Tamaño de remera")
+    vehiculo = forms.ChoiceField(choices=AUTO_OPCIONES, label="Disponibilidad de Vehiculo")
+    experiencia = forms.ChoiceField(choices=AUTO_OPCIONES, label="Experiencia misionando")
+    descripcion = forms.CharField(max_length=500, label="Descripcion de la experiencia", widget=forms.Textarea, required= False)
+
 
     class Meta:
         model = FormularioActividad
@@ -41,7 +61,10 @@ class FormularioActividadForm(MyForm):
             'sexo': Select(choices=FormularioActividad.SEXO_OPCIONES),
         }
 
+
 class FormularioEncuentroForm(MyForm):
+
+
 
     class Meta:
         model = FormularioEncuentro
@@ -49,3 +72,5 @@ class FormularioEncuentroForm(MyForm):
         widgets = {
             'sexo': Select(choices=FormularioActividad.SEXO_OPCIONES),
         }
+
+

@@ -1,3 +1,5 @@
+# -*- encoding: utf-8 -*-
+
 from django.shortcuts import render, render_to_response, HttpResponseRedirect, RequestContext, Http404
 from forms import *
 from models import *
@@ -165,6 +167,8 @@ def formulario_actividad_view(request, idActividad):
         if formulario.is_valid():
             if actividad.controlCI == Actividad.SI:
                 cedula = formulario.cleaned_data['cedula']
+
+
                 #Si ciBoolean es True significa que ya se inscribieron con esa CI
                 ciBoolean = True
                 try:
@@ -183,7 +187,19 @@ def formulario_actividad_view(request, idActividad):
                     )
             
             try:
-                inscripto = formulario.save()
+                vehiculo = formulario.cleaned_data['vehiculo']
+                remera = formulario.cleaned_data['remera']
+                experiencia = formulario.cleaned_data['experiencia']
+                descripcion = formulario.cleaned_data['descripcion']
+                comentarios = formulario.cleaned_data['comentarios']
+                formulario.comentarios = comentarios
+                inscripto = formulario.save(commit=False)
+                inscripto.comentarios += ". Remera: " + remera
+                inscripto.comentarios += ". Disponibilidad de Vehiculo: " + vehiculo
+                inscripto.comentarios += ". Experiencia misionando: " + experiencia
+                inscripto.comentarios += ". Descripcion de la experiencia: " + descripcion
+
+                inscripto.save()
             except IntegrityError:
                 suceso = False
                 mensaje = 'ERROR: Usted ya se ha inscripto a esta actividad'
