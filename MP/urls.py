@@ -10,7 +10,6 @@ urlpatterns = patterns('',
 
     url(r'^admin/', include(admin.site.urls)),
     url(r'^$', 'inscripciones.views.inicio', name='inicio'),
-    url(r'^actividad/$', 'inscripciones.views.form_actividad'),
     url(r'^formulario/$', 'inscripciones.views.formulario_view', name='vista_formulario'),
     url(r'^lista/$', 'inscripciones.views.lista_inscriptos_view'),
     url(r'^actividad/(?P<idActividad>\d+)/formulario/$', 'inscripciones.views.formulario_actividad_view'),
