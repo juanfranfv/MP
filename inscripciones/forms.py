@@ -48,10 +48,8 @@ class FormularioActividadForm(MyForm):
         ('Si', 'Si'),
         ('No', 'No'),
     )
-    remera = forms.ChoiceField(choices=REMERA_OPCIONES, label="Tamaño de remera")
-    vehiculo = forms.ChoiceField(choices=AUTO_OPCIONES, label="Disponibilidad de Vehiculo")
-    experiencia = forms.ChoiceField(choices=AUTO_OPCIONES, label="Experiencia misionando")
-    descripcion = forms.CharField(max_length=500, label="Descripcion de la experiencia", widget=forms.Textarea, required= False)
+    experiencia = forms.ChoiceField(choices=AUTO_OPCIONES, label="Ya construiste en TECHO", required=True)
+    descripcion = forms.CharField(max_length=500, label="Cuantas veces y que roles ocupaste", widget=forms.Textarea, required=False)
 
 
     class Meta:

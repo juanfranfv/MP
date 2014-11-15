@@ -112,10 +112,13 @@ TEMPLATE_LOADERS = ('django.template.loaders.filesystem.Loader',
 
 #Configuracion del email
 
+
+
 EMAIL_USE_TLS = True
 EMAIL_HOST = 'mail.movimientoperegrino.org'
 EMAIL_PORT = 587
-EMAIL_HOST_USER = 'retiros-noreply.movimientoperegrino'
+EMAIL_HOST_USER = 'retiros-noreply@movimientoperegrino.org'
 EMAIL_HOST_PASSWORD = 'macabeos1974!'
 DEFAULT_FROM_EMAIL = 'retiros-noreply@movimientoperegrino.org'
 DEFAULT_TO_EMAIL = 'retiros-noreply@movimientoperegrino.org'
+

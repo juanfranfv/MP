@@ -187,17 +187,13 @@ def formulario_actividad_view(request, idActividad):
                     )
             
             try:
-                vehiculo = formulario.cleaned_data['vehiculo']
-                remera = formulario.cleaned_data['remera']
                 experiencia = formulario.cleaned_data['experiencia']
                 descripcion = formulario.cleaned_data['descripcion']
                 comentarios = formulario.cleaned_data['comentarios']
                 formulario.comentarios = comentarios
                 inscripto = formulario.save(commit=False)
-                inscripto.comentarios += ". Remera: " + remera
-                inscripto.comentarios += ". Disponibilidad de Vehiculo: " + vehiculo
-                inscripto.comentarios += ". Experiencia misionando: " + experiencia
-                inscripto.comentarios += ". Descripcion de la experiencia: " + descripcion
+                inscripto.comentarios += ". Experiencia construyendo en TECHO: " + experiencia
+                inscripto.comentarios += ". Cuantas veces y que roles ocupo: " + descripcion
 
                 inscripto.save()
             except IntegrityError:
