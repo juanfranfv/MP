@@ -157,13 +157,17 @@ def formulario_actividad_view(request, idActividad):
         
     
     #se procesa el POST
-    if request.method=='POST':
+    if request.method == 'POST':
         instanciaFormulario = FormularioActividad()
         instanciaFormulario.actividad = actividad
         instanciaFormulario.direccionIP = ip
         instanciaFormulario.puesto = 1000
-        formulario = FormularioActividadForm(request.POST, instance=instanciaFormulario)
+        instanciaFormulario.coordinador = "invitado"
+        instanciaFormulario.fechaRetiroEncuetro = "01/01/2014"
 
+        formulario = FormularioActividadForm(request.POST, instance=instanciaFormulario)
+        print formulario.cleaned_data['coordinador']
+        print formulario.cleaned_data['fechaRetiroEncuetro']
         if formulario.is_valid():
             if actividad.controlCI == Actividad.SI:
                 cedula = formulario.cleaned_data['cedula']
@@ -187,13 +191,11 @@ def formulario_actividad_view(request, idActividad):
                     )
             
             try:
-                experiencia = formulario.cleaned_data['experiencia']
-                descripcion = formulario.cleaned_data['descripcion']
+                remera = formulario.cleaned_data['remera']
                 comentarios = formulario.cleaned_data['comentarios']
                 formulario.comentarios = comentarios
                 inscripto = formulario.save(commit=False)
-                inscripto.comentarios += ". Experiencia construyendo en TECHO: " + experiencia
-                inscripto.comentarios += ". Cuantas veces y que roles ocupo: " + descripcion
+                inscripto.comentarios += ". Remera: " + remera
 
                 inscripto.save()
             except IntegrityError:
