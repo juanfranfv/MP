@@ -185,6 +185,7 @@ def formulario_actividad_view(request, idActividad):
                         {'mensaje': mensaje, 'suceso': suceso},
                         context_instance=RequestContext(request)
                     )
+
             
             try:
                 inscripto = formulario.save()
