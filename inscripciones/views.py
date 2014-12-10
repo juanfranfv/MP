@@ -186,7 +186,7 @@ def formulario_actividad_view(request, idActividad):
                         context_instance=RequestContext(request)
                     )
 
-            
+
             try:
                 inscripto = formulario.save()
             except IntegrityError:
