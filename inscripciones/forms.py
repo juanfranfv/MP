@@ -49,7 +49,7 @@ class FormularioActividadForm(MyForm):
         ('No', 'No'),
     )
 
-    remera = forms.ChoiceField(choices=REMERA_OPCIONES, label="Tamaño de remera", required=True)
+    #remera = forms.ChoiceField(choices=REMERA_OPCIONES, label="Tamaño de remera", required=True)
     #experiencia = forms.ChoiceField(choices=AUTO_OPCIONES, label="Ya construiste en TECHO", required=True)
     #descripcion = forms.CharField(max_length=500, label="Cuantas veces y que roles ocupaste", widget=forms.Textarea, required=False)
 

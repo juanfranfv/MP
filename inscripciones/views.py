@@ -162,12 +162,8 @@ def formulario_actividad_view(request, idActividad):
         instanciaFormulario.actividad = actividad
         instanciaFormulario.direccionIP = ip
         instanciaFormulario.puesto = 1000
-        instanciaFormulario.coordinador = "invitado"
-        instanciaFormulario.fechaRetiroEncuetro = "01/01/2014"
 
         formulario = FormularioActividadForm(request.POST, instance=instanciaFormulario)
-        print formulario.cleaned_data['coordinador']
-        print formulario.cleaned_data['fechaRetiroEncuetro']
         if formulario.is_valid():
             if actividad.controlCI == Actividad.SI:
                 cedula = formulario.cleaned_data['cedula']
@@ -191,13 +187,7 @@ def formulario_actividad_view(request, idActividad):
                     )
             
             try:
-                remera = formulario.cleaned_data['remera']
-                comentarios = formulario.cleaned_data['comentarios']
-                formulario.comentarios = comentarios
-                inscripto = formulario.save(commit=False)
-                inscripto.comentarios += ". Remera: " + remera
-
-                inscripto.save()
+                inscripto = formulario.save()
             except IntegrityError:
                 suceso = False
                 mensaje = 'ERROR: Usted ya se ha inscripto a esta actividad'
