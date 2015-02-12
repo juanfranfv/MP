@@ -128,7 +128,10 @@ def formulario_actividad_view(request, idActividad):
     if timezone.now() < actividad.fechaActivacion:
         suceso = False
         mensaje = 'La inscripcion a  la actividad "' + actividad.nombre + '" aun no se encuentra habilitada'
-        lista_actividades = Actividad.objects.all()
+        lista_actividades = Actividad.objects.all().order_by('fechaActivacion').reverse()
+        fechaActivacion = timezone.now() + timedelta(days=16)
+        fechaFin = timezone.now() + timedelta(days=1)
+        lista_actividades = lista_actividades.exclude(fechaFin__lte=fechaFin).exclude(fechaActivacion__gte=fechaActivacion)
         return render_to_response(
             'home.html',
             {'mensaje': mensaje, 'suceso': suceso, 'lista_actividades': lista_actividades},
@@ -287,7 +290,10 @@ def formulario_encuentro_view(request, idActividad):
     if timezone.now() < actividad.fechaActivacion:
         suceso = False
         mensaje = 'La inscripcion a  la actividad "' + actividad.nombre + '" aun no se encuentra habilitada'
-        lista_actividades = Actividad.objects.all()
+        lista_actividades = Actividad.objects.all().order_by('fechaActivacion').reverse()
+        fechaActivacion = timezone.now() + timedelta(days=16)
+        fechaFin = timezone.now() + timedelta(days=1)
+        lista_actividades = lista_actividades.exclude(fechaFin__lte=fechaFin).exclude(fechaActivacion__gte=fechaActivacion)
         return render_to_response(
             'home.html',
             {'mensaje': mensaje, 'suceso': suceso, 'lista_actividades': lista_actividades},
