@@ -32,7 +32,7 @@
                 <dt>Fecha de habilitacion:</dt>
                 <dd>{{ actividad.fechaActivacion }}</dd>
             </dl>
-            <div class="alert alert-danger"><b>Requisitos:</b>{{ actividad.requisitos | linebreaks }}</div>
+            <div class="alert alert-warning"><b>Requisitos:</b>{{ actividad.requisitos | linebreaks }}</div>
             {% if actividad.encuentro == 'NO' %}
             <a href="{% url 'inscripciones.views.formulario_actividad_view' actividad.id %}" class="btn btn-default">
                 Inscribirse
@@ -43,6 +43,7 @@
             </a>
             {% endif %}
         </li>
+        <br />
     {% endfor %}
     </ul>
 

@@ -16,6 +16,7 @@ from django.db import IntegrityError
 import csv
 import StringIO
 from django.http import HttpResponse
+from datetime import datetime, timedelta
 
 
 def envio_mail(inscripto, archivo):
@@ -37,8 +38,12 @@ def envio_mail(inscripto, archivo):
 
 def inicio(request):
     lista_actividades = Actividad.objects.all().order_by('fechaActivacion').reverse()
+    fechaActivacion = timezone.now() + timedelta(days=16)
+    fechaFin = timezone.now() + timedelta(days=1)
+    lista_actividades = lista_actividades.exclude(fechaFin__lte=fechaFin).exclude(fechaActivacion__gte=fechaActivacion)
 
-    return render_to_response('home.html', {'lista_actividades': lista_actividades}, context_instance=RequestContext(request))
+    return render_to_response('home.html', {'lista_actividades': lista_actividades},
+                              context_instance=RequestContext(request))
 
 
 def form_actividad(request):
