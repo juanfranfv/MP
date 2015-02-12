@@ -40,8 +40,14 @@ def inicio(request):
     lista_actividades = Actividad.objects.all().order_by('fechaActivacion').reverse()
     fechaActivacion = timezone.now() + timedelta(days=16)
     fechaFin = timezone.now() + timedelta(days=1)
-    lista_actividades = lista_actividades.exclude(fechaFin__lte=fechaFin).exclude(fechaActivacion__gte=fechaActivacion)
+    lista_actividades = lista_actividades.exclude(fechaFin__lte=fechaFin).filter(fechaActivacion__lte=fechaActivacion)
+    return render_to_response('home.html', {'lista_actividades': lista_actividades},
+                              context_instance=RequestContext(request))
 
+
+@login_required(login_url='/login')
+def lista_actividades(request):
+    lista_actividades = Actividad.objects.all().order_by('fechaActivacion').reverse()
     return render_to_response('home.html', {'lista_actividades': lista_actividades},
                               context_instance=RequestContext(request))
 
@@ -62,8 +68,8 @@ def form_actividad(request):
 
 
 def formulario_view(request):
-    if request.method=='POST':
-        #formularioMod = Formulario(Direccion_ip= request.META.get('REMOTE_ADDR'))
+    if request.method == 'POST':
+        # formularioMod = Formulario(Direccion_ip= request.META.get('REMOTE_ADDR'))
         #actividad = Actividad.objects.get(pk=1)
         #formularioMod.Actividad =actividad
         formularioForm = FormularioForm(request.POST)
@@ -74,13 +80,14 @@ def formulario_view(request):
     else:
         formularioForm = FormularioForm()
     return render_to_response('form-retiro.html',
-        {'formulario': formularioForm},
-        context_instance=RequestContext(request))
+                              {'formulario': formularioForm},
+                              context_instance=RequestContext(request))
 
 
 def lista_inscriptos_view(request):
     lista_inscriptos = Formulario.objects.all()
-    return render_to_response('lista.html', {'lista_inscriptos':lista_inscriptos}, context_instance=RequestContext(request))
+    return render_to_response('lista.html', {'lista_inscriptos': lista_inscriptos},
+                              context_instance=RequestContext(request))
 
 
 def get_client_ip(request):
@@ -93,7 +100,7 @@ def get_client_ip(request):
 
 
 def formulario_actividad_view(request, idActividad):
-    #formulario_actividad
+    # formulario_actividad
 
     ip = get_client_ip(request)
     actividad = Actividad.objects.get(pk=idActividad)
@@ -131,7 +138,7 @@ def formulario_actividad_view(request, idActividad):
         lista_actividades = Actividad.objects.all().order_by('fechaActivacion').reverse()
         fechaActivacion = timezone.now() + timedelta(days=16)
         fechaFin = timezone.now() + timedelta(days=1)
-        lista_actividades = lista_actividades.exclude(fechaFin__lte=fechaFin).exclude(fechaActivacion__gte=fechaActivacion)
+        lista_actividades = lista_actividades.exclude(fechaFin__lte=fechaFin).filter(fechaActivacion__lte=fechaActivacion)
         return render_to_response(
             'home.html',
             {'mensaje': mensaje, 'suceso': suceso, 'lista_actividades': lista_actividades},
@@ -162,8 +169,8 @@ def formulario_actividad_view(request, idActividad):
             )
     else:
         ipBoolean = False
-        
-    
+
+
     #se procesa el POST
     if request.method == 'POST':
         instanciaFormulario = FormularioActividad()
@@ -226,19 +233,22 @@ def formulario_actividad_view(request, idActividad):
                     csvwriter = csv.writer(csvfile, delimiter=';')
                     csvwriter.writerow(['Puesto', 'Nombre', 'Apellido', 'Edad', 'Fecha de Nacimiento',
                                         'Cedula', 'Telefono', 'Email', 'Colegio/Universidad', 'Curso', 'Sexo',
-                                        'Fecha de Retiro Encuentro', 'Coordinador', 'Enfermedades o Alergias', 'Contacto',
+                                        'Fecha de Retiro Encuentro', 'Coordinador', 'Enfermedades o Alergias',
+                                        'Contacto',
                                         'Relacion', 'Telefono Contacto', 'Dieta Especial', 'Comentarios', 'IP',
                                         'Fecha de inscripcion'])
                     for inscripto in lista_inscriptos:
-                        csvwriter.writerow([inscripto.puesto, inscripto.nombre.encode('utf-8'), inscripto.apellido.encode('utf-8'),
-                                            inscripto.edad, inscripto.fechaNacimiento, inscripto.cedula.encode('utf8'),
-                                            inscripto.telefono.encode('utf-8'), inscripto.email, inscripto.institucion.encode('utf-8'),
-                                            inscripto.curso.encode('utf-8'), inscripto.get_sexo_display(), inscripto.fechaRetiroEncuetro,
-                                            inscripto.coordinador.encode('utf-8'), inscripto.enfermedad.encode('utf-8'),
-                                            inscripto.contacto.encode('utf-8'), inscripto.relacionContacto.encode('utf-8'),
-                                            inscripto.telefonoContacto.encode('utf-8'), inscripto.alimentacion.encode('utf-8'),
-                                            inscripto.comentarios.encode('utf-8'),
-                                            inscripto.direccionIP, inscripto.fechaInscripcion])
+                        csvwriter.writerow(
+                            [inscripto.puesto, inscripto.nombre.encode('utf-8'), inscripto.apellido.encode('utf-8'),
+                             inscripto.edad, inscripto.fechaNacimiento, inscripto.cedula.encode('utf8'),
+                             inscripto.telefono.encode('utf-8'), inscripto.email, inscripto.institucion.encode('utf-8'),
+                             inscripto.curso.encode('utf-8'), inscripto.get_sexo_display(),
+                             inscripto.fechaRetiroEncuetro,
+                             inscripto.coordinador.encode('utf-8'), inscripto.enfermedad.encode('utf-8'),
+                             inscripto.contacto.encode('utf-8'), inscripto.relacionContacto.encode('utf-8'),
+                             inscripto.telefonoContacto.encode('utf-8'), inscripto.alimentacion.encode('utf-8'),
+                             inscripto.comentarios.encode('utf-8'),
+                             inscripto.direccionIP, inscripto.fechaInscripcion])
                     email = EmailMessage('Inscriptos', 'Documento con los inscriptos',
                                          settings.EMAIL_HOST_USER, [actividad.emailContacto])
                     email.attach('inscriptos-' + actividad.nombre + '.csv', csvfile.getvalue(), 'text/csv')
@@ -252,13 +262,13 @@ def formulario_actividad_view(request, idActividad):
         formulario = FormularioActividadForm()
     return render_to_response(
         'form-actividad2.html',
-        {'formulario': formulario, 'ipBoolean':ipBoolean, 'actividad':actividad},
+        {'formulario': formulario, 'ipBoolean': ipBoolean, 'actividad': actividad},
         context_instance=RequestContext(request)
     )
 
 
 def formulario_encuentro_view(request, idActividad):
-    #formulario_actividad
+    # formulario_actividad
 
     ip = get_client_ip(request)
     actividad = Actividad.objects.get(pk=idActividad)
@@ -293,7 +303,7 @@ def formulario_encuentro_view(request, idActividad):
         lista_actividades = Actividad.objects.all().order_by('fechaActivacion').reverse()
         fechaActivacion = timezone.now() + timedelta(days=16)
         fechaFin = timezone.now() + timedelta(days=1)
-        lista_actividades = lista_actividades.exclude(fechaFin__lte=fechaFin).exclude(fechaActivacion__gte=fechaActivacion)
+        lista_actividades = lista_actividades.exclude(fechaFin__lte=fechaFin).filter(fechaActivacion__lte=fechaActivacion)
         return render_to_response(
             'home.html',
             {'mensaje': mensaje, 'suceso': suceso, 'lista_actividades': lista_actividades},
@@ -323,8 +333,6 @@ def formulario_encuentro_view(request, idActividad):
             )
     else:
         ipBoolean = False
-
-
 
     if request.method == 'POST':
         instanciaFormulario = FormularioEncuentro()
@@ -390,13 +398,17 @@ def formulario_encuentro_view(request, idActividad):
                                         'Telefono Contacto', 'Dieta Especial', 'Comentarios', 'IP',
                                         'Fecha de inscripcion'])
                     for inscripto in lista_inscriptos:
-                        csvwriter.writerow([inscripto.puesto, inscripto.nombre.encode('utf-8'), inscripto.apellido.encode('utf-8'),
-                                            inscripto.edad, inscripto.fechaNacimiento, inscripto.cedula.encode('utf-8'),
-                                            inscripto.telefono.encode('utf-8'), inscripto.email, inscripto.institucion.encode('utf-8'),
-                                            inscripto.curso.encode('utf-8'), inscripto.get_sexo_display(), inscripto.invitadoPeregrino.encode('utf-8'),
-                                            inscripto.enfermedad.encode('utf-8'), inscripto.contacto.encode('utf-8'), inscripto.relacionContacto.encode('utf-8'),
-                                            inscripto.telefonoContacto.encode('utf-8'), inscripto.alimentacion.encode('utf-8'), inscripto.comentarios.encode('utf-8'),
-                                            inscripto.direccionIP, inscripto.fechaInscripcion])
+                        csvwriter.writerow(
+                            [inscripto.puesto, inscripto.nombre.encode('utf-8'), inscripto.apellido.encode('utf-8'),
+                             inscripto.edad, inscripto.fechaNacimiento, inscripto.cedula.encode('utf-8'),
+                             inscripto.telefono.encode('utf-8'), inscripto.email, inscripto.institucion.encode('utf-8'),
+                             inscripto.curso.encode('utf-8'), inscripto.get_sexo_display(),
+                             inscripto.invitadoPeregrino.encode('utf-8'),
+                             inscripto.enfermedad.encode('utf-8'), inscripto.contacto.encode('utf-8'),
+                             inscripto.relacionContacto.encode('utf-8'),
+                             inscripto.telefonoContacto.encode('utf-8'), inscripto.alimentacion.encode('utf-8'),
+                             inscripto.comentarios.encode('utf-8'),
+                             inscripto.direccionIP, inscripto.fechaInscripcion])
 
                     email = EmailMessage('Inscriptos', 'Documento con los inscriptos',
                                          settings.EMAIL_HOST_USER, [actividad.emailContacto])
@@ -481,7 +493,6 @@ def inscriptos_view(request, id_actividad):
 
 @login_required(login_url='/login')
 def csv_view(request, id_actividad):
-
     actividad = Actividad.objects.get(pk=id_actividad)
     response = HttpResponse(content_type='text/csv')
     response['Content-Disposition'] = 'attachment; filename="inscriptos.csv"'
@@ -489,44 +500,46 @@ def csv_view(request, id_actividad):
     writer = csv.writer(response, delimiter=';')
 
     if actividad.encuentro == Actividad.SI:
-        #csvwriter = csv.writer(csvfile, delimiter=';')
+        # csvwriter = csv.writer(csvfile, delimiter=';')
         lista_inscriptos = FormularioEncuentro.objects.filter(actividad=actividad).order_by('puesto')
         writer.writerow(['Puesto', 'Nombre', 'Apellido', 'Edad', 'Fecha de Nacimiento',
-                            'Cedula', 'Telefono', 'Email', 'Colegio/Universidad', 'Curso', 'Sexo',
-                            'Peregrino que le invito', 'Enfermedades o Alergias', 'Contacto', 'Relacion',
-                            'Telefono Contacto', 'Dieta Especial', 'Comentarios', 'IP',
-                            'Fecha de inscripcion'])
+                         'Cedula', 'Telefono', 'Email', 'Colegio/Universidad', 'Curso', 'Sexo',
+                         'Peregrino que le invito', 'Enfermedades o Alergias', 'Contacto', 'Relacion',
+                         'Telefono Contacto', 'Dieta Especial', 'Comentarios', 'IP',
+                         'Fecha de inscripcion'])
         for inscripto in lista_inscriptos:
             writer.writerow([inscripto.puesto, inscripto.nombre.encode('utf-8'), inscripto.apellido.encode('utf-8'),
-                                inscripto.edad, inscripto.fechaNacimiento, inscripto.cedula.encode('utf-8'),
-                                inscripto.telefono.encode('utf-8'), inscripto.email, inscripto.institucion.encode('utf-8'),
-                                inscripto.curso.encode('utf-8'), inscripto.get_sexo_display(), inscripto.invitadoPeregrino.encode('utf-8'),
-                                inscripto.enfermedad.encode('utf-8'), inscripto.contacto.encode('utf-8'), inscripto.relacionContacto.encode('utf-8'),
-                                inscripto.telefonoContacto.encode('utf-8'), inscripto.alimentacion.encode('utf-8'), inscripto.comentarios.encode('utf-8'),
-                                inscripto.direccionIP, inscripto.fechaInscripcion])
+                             inscripto.edad, inscripto.fechaNacimiento, inscripto.cedula.encode('utf-8'),
+                             inscripto.telefono.encode('utf-8'), inscripto.email, inscripto.institucion.encode('utf-8'),
+                             inscripto.curso.encode('utf-8'), inscripto.get_sexo_display(),
+                             inscripto.invitadoPeregrino.encode('utf-8'),
+                             inscripto.enfermedad.encode('utf-8'), inscripto.contacto.encode('utf-8'),
+                             inscripto.relacionContacto.encode('utf-8'),
+                             inscripto.telefonoContacto.encode('utf-8'), inscripto.alimentacion.encode('utf-8'),
+                             inscripto.comentarios.encode('utf-8'),
+                             inscripto.direccionIP, inscripto.fechaInscripcion])
 
 
     else:
         lista_inscriptos = FormularioActividad.objects.filter(actividad=actividad).order_by('puesto')
-        #csvfile = StringIO.StringIO()
+        # csvfile = StringIO.StringIO()
         #csvwriter = csv.writer(csvfile, delimiter=';')
         writer.writerow(['Puesto', 'Nombre', 'Apellido', 'Edad', 'Fecha de Nacimiento',
-                            'Cedula', 'Telefono', 'Email', 'Colegio/Universidad', 'Curso', 'Sexo',
-                            'Fecha de Retiro Encuentro', 'Coordinador', 'Enfermedades o Alergias', 'Contacto',
-                            'Relacion', 'Telefono Contacto', 'Dieta Especial', 'Comentarios', 'IP',
-                            'Fecha de inscripcion'])
+                         'Cedula', 'Telefono', 'Email', 'Colegio/Universidad', 'Curso', 'Sexo',
+                         'Fecha de Retiro Encuentro', 'Coordinador', 'Enfermedades o Alergias', 'Contacto',
+                         'Relacion', 'Telefono Contacto', 'Dieta Especial', 'Comentarios', 'IP',
+                         'Fecha de inscripcion'])
         for inscripto in lista_inscriptos:
             writer.writerow([inscripto.puesto, inscripto.nombre.encode('utf-8'), inscripto.apellido.encode('utf-8'),
-                                inscripto.edad, inscripto.fechaNacimiento, inscripto.cedula.encode('utf8'),
-                                inscripto.telefono.encode('utf-8'), inscripto.email, inscripto.institucion.encode('utf-8'),
-                                inscripto.curso.encode('utf-8'), inscripto.get_sexo_display(), inscripto.fechaRetiroEncuetro,
-                                inscripto.coordinador.encode('utf-8'), inscripto.enfermedad.encode('utf-8'),
-                                inscripto.contacto.encode('utf-8'), inscripto.relacionContacto.encode('utf-8'),
-                                inscripto.telefonoContacto.encode('utf-8'), inscripto.alimentacion.encode('utf-8'),
-                                inscripto.comentarios.encode('utf-8'),
-                                inscripto.direccionIP, inscripto.fechaInscripcion])
-
-
+                             inscripto.edad, inscripto.fechaNacimiento, inscripto.cedula.encode('utf8'),
+                             inscripto.telefono.encode('utf-8'), inscripto.email, inscripto.institucion.encode('utf-8'),
+                             inscripto.curso.encode('utf-8'), inscripto.get_sexo_display(),
+                             inscripto.fechaRetiroEncuetro,
+                             inscripto.coordinador.encode('utf-8'), inscripto.enfermedad.encode('utf-8'),
+                             inscripto.contacto.encode('utf-8'), inscripto.relacionContacto.encode('utf-8'),
+                             inscripto.telefonoContacto.encode('utf-8'), inscripto.alimentacion.encode('utf-8'),
+                             inscripto.comentarios.encode('utf-8'),
+                             inscripto.direccionIP, inscripto.fechaInscripcion])
 
     return response
 

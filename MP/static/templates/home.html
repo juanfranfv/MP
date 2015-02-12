@@ -8,10 +8,6 @@
         <div class="alert alert-danger">{{ mensaje }}</div>
     {% endif %}
 
-    <!--
-        <a href="{% url 'inscripciones.views.formulario_view' %}" class="btn btn-default">Inscribirse al retiro</a>
-        <a href="{% url 'inscripciones.views.lista_inscriptos_view' %}" class="btn btn-default">Lista de inscriptos</a>
-    -->
     <ul class="list-group">
     {% for actividad in lista_actividades %}
         <li class="list-group-item">

@@ -6,6 +6,7 @@
     <link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}css/jquery-ui.css">
     <link rel="stylesheet" href="{{ STATIC_URL }}css/bootstrap.min.css" media="screen">
     <script src="{{ STATIC_URL }}js/bootstrap.js"></script>
+    <script src="{{ STATIC_URL }}js/datepicker.js"></script>
 {% endblock %}
 {% block contenido %}
     {% if ipBoolean == True %}
@@ -41,9 +42,11 @@
     <script type="text/javascript">
         $(function () {
             $("[id*='id_fecha']").datepicker({
-                dateFormat: 'yy-mm-dd'
+                dateFormat: 'dd/mm/yy',
+                changeMonth: true,
+                changeYear: true
             });
-            $("[id*='id_fecha']").attr("readonly", true);
+            //$("[id*='id_fecha']").attr("readonly", true);
         });
     </script>
 {% endblock %}
