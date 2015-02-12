@@ -1,13 +1,14 @@
 <!DOCTYPE html>
 <html>
 <head>
-
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Nueva actividad</title>
-    <script src="{{ STATIC_URL }}js/jquery.js"></script>
-    <script src="{{ STATIC_URL }}js/jquery.datetimepicker.js"></script>
-    <link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}css/jquery.datetimepicker.css">
+    <script src="{{ STATIC_URL }}js/jquery-1.11.2.min.js"></script>
+    <script src="{{ STATIC_URL }}js/jquery-ui.js"></script>
+    <script src="{{ STATIC_URL }}js/jquery-ui-timepicker-addon.js"></script>
+    <link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}css/jquery-ui.css">
+    <link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}css/jquery-ui-timepicker-addon.css">
     <link rel="stylesheet" href="{{ STATIC_URL }}css/bootstrap.min.css" media="screen">
     <script src="{{ STATIC_URL }}js/bootstrap.js"></script>
     {{ formulario.media }}
@@ -71,14 +72,13 @@
 <script type="text/javascript">
     $(function () {
         $("[id*='id_fecha']").datetimepicker({
-            format: 'd/m/Y H:i:s',
-            onChangeDateTime: function (ct, $i) {
-                ct.setSeconds(0);
-                $i.val(ct.dateFormat('d/m/Y H:i:s'));
-            }
+            timeFormat: 'HH:mm:ss',
+            dateFormat:'yy-mm-dd',
+            stepHour: 2,
+            stepMinute: 10,
+            stepSecond: 10
         });
+         $("[id*='id_fecha']").attr("readonly", true);
     });
-
-
 </script>
 </html>

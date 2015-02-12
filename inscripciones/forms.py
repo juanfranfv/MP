@@ -7,7 +7,7 @@ from inscripciones.models import *
 from django.forms.extras.widgets import SelectDateWidget
 from django.contrib.admin.widgets import AdminDateWidget
 from datetimewidget.widgets import DateTimeWidget
-forms.DateInput.input_type = "date"
+forms.DateInput.input_type = "text"
 
 
 class MyForm(forms.ModelForm):

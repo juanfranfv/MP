@@ -7,6 +7,8 @@
 
     <link rel="stylesheet" href="{{ STATIC_URL }}css/bootstrap.min.css" media="screen">
     <link rel="shortcut icon" href="{{ STATIC_URL }}img/favicon.ico" />
+    <script src="http://code.jquery.com/jquery.js"></script>
+    <script src="{{ STATIC_URL }}js/bootstrap.js"></script>
     {% block links %}{% endblock %}
 </head>
 <body>
@@ -46,11 +48,6 @@
             </div>
         </div>
     </div>
-
-
-    <script src="http://code.jquery.com/jquery.js"></script>
-    <script src="{{ STATIC_URL }}js/bootstrap.js"></script>
-
-    {% block scripts %}{% endblock %}
 </body>
+    {% block scripts %}{% endblock %}
 </html>

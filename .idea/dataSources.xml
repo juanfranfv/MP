@@ -4,9 +4,9 @@
     <data-source source="LOCAL" name="Django default" uuid="257c822a-9872-48f7-8794-93cb07fb10d7">
       <driver-ref>postgresql</driver-ref>
       <jdbc-driver>org.postgresql.Driver</jdbc-driver>
-      <jdbc-url>jdbc:postgresql://127.0.0.1:5432/mp</jdbc-url>
-      <user-name>mp</user-name>
-      <user-password>dfc7dfda</user-password>
+      <jdbc-url>jdbc:postgresql://127.0.0.1:5432/mp_inscripciones</jdbc-url>
+      <user-name>postgres</user-name>
+      <user-password>dfdadfc5dfd9dfdedfcddfd8dfcfdfd9</user-password>
       <libraries>
         <library>
           <url>file://$USER_HOME$/.PyCharm20/config/jdbc-drivers/postgresql-driver-license.txt</url>
