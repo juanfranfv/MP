@@ -47,6 +47,7 @@ def inicio(request):
 
 @login_required(login_url='/login')
 def lista_actividades(request):
+    context_instance=RequestContext(request);
     lista_actividades = Actividad.objects.all().order_by('fechaActivacion').reverse()
     return render_to_response('home.html', {'lista_actividades': lista_actividades},
                               context_instance=RequestContext(request))
@@ -473,21 +474,22 @@ def lista_actividades_view(request):
 @login_required(login_url='/login')
 def inscriptos_view(request, id_actividad):
     actividad = Actividad.objects.get(pk=id_actividad)
+    context_instance=RequestContext(request)
 
     if actividad.encuentro == Actividad.SI:
         html = 'inscriptos-encuentro.html'
         lista_inscriptos = FormularioEncuentro.objects.filter(actividad=actividad).order_by('puesto')
-
-
-
     else:
         html = 'inscriptos.html'
         lista_inscriptos = FormularioActividad.objects.filter(actividad=actividad).order_by('puesto')
 
+    cantidad_inscriptos = len(lista_inscriptos)
+    context_instance['cantidad_inscriptos'] = cantidad_inscriptos
+
     return render_to_response(
         html,
         {'lista_inscriptos': lista_inscriptos, 'actividad': actividad},
-        context_instance=RequestContext(request)
+        context_instance
     )
 
 

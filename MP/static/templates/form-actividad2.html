@@ -44,9 +44,10 @@
             $("[id*='id_fecha']").datepicker({
                 dateFormat: 'dd/mm/yy',
                 changeMonth: true,
-                changeYear: true
+                changeYear: true,
+                yearRange: "-100:+0"
             });
-            //$("[id*='id_fecha']").attr("readonly", true);
+            $("[id*='id_fecha']").attr("readonly", true);
         });
     </script>
 {% endblock %}
