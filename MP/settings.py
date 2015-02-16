@@ -12,6 +12,9 @@ https://docs.djangoproject.com/en/1.6/ref/settings/
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 import os
+import glob
+
+
 BASE_DIR = os.path.dirname(os.path.realpath(__file__))
 
 
@@ -60,21 +63,6 @@ ROOT_URLCONF = 'MP.urls'
 
 WSGI_APPLICATION = 'MP.wsgi.application'
 
-
-# # Database
-# # https://docs.djangoproject.com/en/1.6/ref/settings/#databases
-#
-# DATABASES = {
-#     'default': {
-#         'ENGINE': 'django.db.backends.postgresql_psycopg2',
-#         'NAME': 'mp_inscripciones',
-#         'USER': 'postgres',
-#         'PASSWORD': 'postgres',
-#         'HOST': '127.0.0.1',
-#         'PORT': '5432',
-#     }
-# }
-
 # Internationalization
 # https://docs.djangoproject.com/en/1.6/topics/i18n/
 
@@ -109,16 +97,9 @@ STATICFILES_DIRS = (
 TEMPLATE_LOADERS = ('django.template.loaders.filesystem.Loader',
                     'django.template.loaders.app_directories.Loader')
 
-
-#Configuracion del email
-
-
-
-EMAIL_USE_TLS = True
-EMAIL_HOST = 'mail.movimientoperegrino.org'
-EMAIL_PORT = 587
-EMAIL_HOST_USER = 'retiros-noreply@movimientoperegrino.org'
-EMAIL_HOST_PASSWORD = 'macabeos1974!'
-DEFAULT_FROM_EMAIL = 'retiros-noreply@movimientoperegrino.org'
-DEFAULT_TO_EMAIL = 'retiros-noreply@movimientoperegrino.org'
-
+# Load configuration files.
+# https://code.djangoproject.com/wiki/SplitSettings#UsingalistofconffilesTransifex
+conffiles = glob.glob(os.path.join(os.path.dirname(__file__), '../settings_conf', '*.conf'))
+conffiles.sort()
+for f in conffiles:
+    execfile(os.path.abspath(f))
