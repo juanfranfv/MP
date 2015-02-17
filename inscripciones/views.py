@@ -223,7 +223,8 @@ def formulario_actividad_view(request, idActividad):
                 envio_mail(inscripto, 'inscripcion-suplente')
 
             suceso = True
-            mensaje = 'Su solicitud ha sido procesada con exito'
+            mensaje = 'Su solicitud ha sido procesada con exito. En breve recibira un correo de confirmacion,' \
+                      'verifique la carpeta "Correo no deseado" si no encuentra el correo'
 
             if cantidad == cantidadPermitida:
                 if actividad.estado == Actividad.ACTIVO:
@@ -383,7 +384,8 @@ def formulario_encuentro_view(request, idActividad):
                 envio_mail(inscripto, 'inscripcion-suplente')
 
             suceso = True
-            mensaje = 'Su solicitud ha sido procesada con exito'
+            mensaje = 'Su solicitud ha sido procesada con exito. En breve recibira un correo de confirmacion,' \
+                      'verifique la carpeta "Correo no deseado" si no encuentra el correo'
 
             if cantidad == cantidadPermitida:
                 if actividad.estado == Actividad.ACTIVO:
