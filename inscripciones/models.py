@@ -122,7 +122,7 @@ class FormularioActividad(models.Model):
     edad = models.PositiveIntegerField(verbose_name="Edad")
     fechaNacimiento = models.DateField(verbose_name="Fecha de Nacimiento (*)")
     fechaRetiroEncuetro = models.DateField("Fecha de Retiro de Encuentro (*)")
-    coordinador = models.CharField(max_length=100, verbose_name="Coordinador de Retiro de Encuentro")
+    coordinador = models.CharField(max_length=100, verbose_name="Coordinador de Retiro de Encuentro (*)")
     institucion = models.CharField(max_length=100, verbose_name="Colegio/Universidad (*)",)
     curso = models.CharField(max_length=100, blank=True)
     sexo = models.CharField(max_length=1, choices=SEXO_OPCIONES, verbose_name="Sexo (*)")

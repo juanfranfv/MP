@@ -14,7 +14,7 @@
     {% else %}
         <div class="alert alert-info">
             Los campos que poseen (*) son obligatorios<br>
-            Formato de fecha: dd/mm/aaaa
+            Formato de fecha: <b>aaaa-mm-dd</b> | Ejemplo: 1974-10-22
         </div>
         <form id="formulario" method="post" action="">{% csrf_token %}
             <table class="table">
@@ -42,7 +42,7 @@
     <script type="text/javascript">
         $(function () {
             $("[id*='id_fecha']").datepicker({
-                dateFormat: 'dd/mm/yy',
+                dateFormat: 'yy-mm-dd',
                 changeMonth: true,
                 changeYear: true,
                 yearRange: "-100:+0"
