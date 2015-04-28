@@ -43,7 +43,7 @@ INSTALLED_APPS = (
     'django.contrib.admin',
     'django.contrib.admindocs',
     'inscripciones',
-    'datetimewidget',
+    'multi_email_field',
 )
 
 MIDDLEWARE_CLASSES = (

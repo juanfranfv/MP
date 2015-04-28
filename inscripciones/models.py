@@ -2,6 +2,8 @@ from django.db import models
 
 
 # Create your models here.
+from multi_email_field.fields import MultiEmailField
+
 
 class MiForm(models.Model):
     error_css_class = 'list-group-item-danger'
@@ -24,7 +26,7 @@ class Actividad(models.Model):
     cantidadTitulares = models.PositiveIntegerField(verbose_name="Cantidad de Titulares *")
     cantidadSuplentes = models.PositiveIntegerField(verbose_name="Cantidad de Suplentes")
     nombreContacto = models.CharField(max_length=100, verbose_name="Nombre de contacto")
-    emailContacto = models.EmailField(verbose_name="Email de contacto")
+    emailContacto = MultiEmailField(verbose_name="Email de contacto")
     ACTIVO = 'A'
     INACTIVO = 'I'
     FINALIZADO = 'F'

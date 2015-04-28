@@ -19,7 +19,7 @@ from django.http import HttpResponse
 from datetime import datetime, timedelta
 
 
-def envio_mail(inscripto, archivo):
+def envio_mail(inscripto, archivo, contactoTitular):
     htmly = get_template('emails/' + archivo + '.html')
     origen = 'Movimiento Peregrino <retiros-noreply@movimientoperegrino.org>'
 
@@ -29,7 +29,9 @@ def envio_mail(inscripto, archivo):
     if archivo == 'inscripcion-suplente':
         asunto = '[MP] Lista de Espera'
 
-    d = Context({'inscripto': inscripto})
+
+
+    d = Context({'inscripto': inscripto, 'contactoTitular': contactoTitular})
     html_content = htmly.render(d)
     msg = EmailMultiAlternatives(asunto, html_content, origen, [inscripto.email])
     msg.attach_alternative(html_content, 'text/html')
@@ -111,7 +113,7 @@ def formulario_actividad_view(request, idActividad):
         suceso = False
         mensaje = 'La inscripcion a la actividad: "' + actividad.nombre + '" ha finalizado.'
         mensaje += ' Si tiene alguna consulta, comuniquese con el encargado de inscripciones al correo: '
-        mensaje += actividad.emailContacto
+        mensaje += actividad.emailContacto[0]
         return render_to_response(
             'home.html',
             {'mensaje': mensaje, 'suceso': suceso},
@@ -215,12 +217,14 @@ def formulario_actividad_view(request, idActividad):
             cantidad = FormularioActividad.objects.filter(actividad=actividad).filter(pk__lte=inscripto.id).count()
             inscripto.puesto = cantidad
             inscripto.save()
+
+            contactoTitular = actividad.emailContacto[0]
             titulo_mail = 'Inscripcion a "' + actividad.nombre + '"'
             if inscripto.puesto <= actividad.cantidadTitulares:
-                envio_mail(inscripto, 'inscripcion-titular')
+                envio_mail(inscripto, 'inscripcion-titular', contactoTitular)
 
             else:
-                envio_mail(inscripto, 'inscripcion-suplente')
+                envio_mail(inscripto, 'inscripcion-suplente', contactoTitular)
 
             suceso = True
             mensaje = 'Su solicitud ha sido procesada con exito. En breve recibira un correo de confirmacion,' \
@@ -252,8 +256,9 @@ def formulario_actividad_view(request, idActividad):
                              inscripto.comentarios.encode('utf-8'),
                              inscripto.direccionIP, inscripto.fechaInscripcion])
                     email = EmailMessage('Inscriptos', 'Documento con los inscriptos',
-                                         settings.EMAIL_HOST_USER, [actividad.emailContacto])
-                    email.attach('inscriptos-' + actividad.nombre + '.csv', csvfile.getvalue(), 'text/csv')
+                                         settings.EMAIL_HOST_USER, actividad.emailContacto)
+                    dateForAttach = datetime.now().date()
+                    email.attach('inscriptos-' + actividad.nombre + '-'+ dateForAttach.__str__() + '.csv', csvfile.getvalue(), 'text/csv')
                     email.send()
             return render_to_response(
                 'home.html',
@@ -376,12 +381,14 @@ def formulario_encuentro_view(request, idActividad):
             cantidad = FormularioEncuentro.objects.filter(actividad=actividad).filter(pk__lte=inscripto.id).count()
             inscripto.puesto = cantidad
             inscripto.save()
+
+            contactoTitular = actividad.emailContacto[0]
             titulo_mail = 'Inscripcion a "' + actividad.nombre + '"'
             if inscripto.puesto <= actividad.cantidadTitulares:
-                envio_mail(inscripto, 'inscripcion-titular')
+                envio_mail(inscripto, 'inscripcion-titular', contactoTitular)
 
             else:
-                envio_mail(inscripto, 'inscripcion-suplente')
+                envio_mail(inscripto, 'inscripcion-suplente', contactoTitular)
 
             suceso = True
             mensaje = 'Su solicitud ha sido procesada con exito. En breve recibira un correo de confirmacion,' \
@@ -617,3 +624,36 @@ def actividad_eliminada_view(request, id_actividad):
         {'mensaje': mensaje, 'lista_actividades': actividades},
         context_instance=RequestContext(request)
     )
+
+
+def envio_inscriptos_parcial_view():
+
+    actividades = Actividad.objects.filter(estado=Actividad.ACTIVO)
+
+    for actividad in actividades:
+        lista_inscriptos = FormularioActividad.objects.filter(actividad=actividad).order_by('puesto')
+        csvfile = StringIO.StringIO()
+        csvwriter = csv.writer(csvfile, delimiter=';')
+        csvwriter.writerow(['Puesto', 'Nombre', 'Apellido', 'Edad', 'Fecha de Nacimiento',
+                            'Cedula', 'Telefono', 'Email', 'Colegio/Universidad', 'Curso', 'Sexo',
+                            'Fecha de Retiro Encuentro', 'Coordinador', 'Enfermedades o Alergias',
+                            'Contacto',
+                            'Relacion', 'Telefono Contacto', 'Dieta Especial', 'Comentarios', 'IP',
+                            'Fecha de inscripcion'])
+        for inscripto in lista_inscriptos:
+            csvwriter.writerow(
+                [inscripto.puesto, inscripto.nombre.encode('utf-8'), inscripto.apellido.encode('utf-8'),
+                 inscripto.edad, inscripto.fechaNacimiento, inscripto.cedula.encode('utf8'),
+                 inscripto.telefono.encode('utf-8'), inscripto.email, inscripto.institucion.encode('utf-8'),
+                 inscripto.curso.encode('utf-8'), inscripto.get_sexo_display(),
+                 inscripto.fechaRetiroEncuetro,
+                 inscripto.coordinador.encode('utf-8'), inscripto.enfermedad.encode('utf-8'),
+                 inscripto.contacto.encode('utf-8'), inscripto.relacionContacto.encode('utf-8'),
+                 inscripto.telefonoContacto.encode('utf-8'), inscripto.alimentacion.encode('utf-8'),
+                 inscripto.comentarios.encode('utf-8'),
+                 inscripto.direccionIP, inscripto.fechaInscripcion])
+        email = EmailMessage('Inscriptos', 'Documento con los inscriptos',
+                             settings.EMAIL_HOST_USER, actividad.emailContacto)
+        dateForAttach = datetime.now().date()
+        email.attach('inscriptos-' + actividad.nombre + '-'+ dateForAttach.__str__() + '.csv', csvfile.getvalue(), 'text/csv')
+        email.send()

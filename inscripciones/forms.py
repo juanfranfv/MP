@@ -6,7 +6,6 @@ from django.forms import Select
 from inscripciones.models import *
 from django.forms.extras.widgets import SelectDateWidget
 from django.contrib.admin.widgets import AdminDateWidget
-from datetimewidget.widgets import DateTimeWidget
 forms.DateInput.input_type = "text"
 
 
@@ -21,8 +20,11 @@ class MyForm(forms.ModelForm):
 
 
 class ActividadForm(MyForm):
+    emailContacto = MultiEmailField()
     class Meta:
         model = Actividad
+
+
 
         #widgets = {
             #'fechaInicio': DateTimeWidget(attrs={'id': "id_fechaInicio"}, usel10n=True, bootstrap_version=3),
