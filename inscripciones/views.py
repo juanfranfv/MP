@@ -127,7 +127,7 @@ def formulario_actividad_view(request, idActividad):
         suceso = False
         mensaje = 'El cupo  para "' + actividad.nombre + '" se encuentra lleno.'
         mensaje += ' Si tiene alguna consulta, comuniquese con el encargado de inscripciones al correo: '
-        mensaje += actividad.emailContacto
+        mensaje += actividad.emailContacto[0]
         return render_to_response(
             'home.html',
             {'mensaje': mensaje, 'suceso': suceso},
@@ -284,7 +284,7 @@ def formulario_encuentro_view(request, idActividad):
         suceso = False
         mensaje = 'La inscripcion a la actividad: "' + actividad.nombre + '" ha finalizado.'
         mensaje += ' Si tiene alguna consulta, comuniquese con el encargado de inscripciones al correo: '
-        mensaje += actividad.emailContacto
+        mensaje += actividad.emailContacto[0]
         return render_to_response(
             'home.html',
             {'mensaje': mensaje, 'suceso': suceso},
@@ -297,7 +297,7 @@ def formulario_encuentro_view(request, idActividad):
         suceso = False
         mensaje = 'El cupo  para "' + actividad.nombre + '" se encuentra lleno.'
         mensaje += ' Si tiene alguna consulta, comuniquese con el encargado de inscripciones al correo: '
-        mensaje += actividad.emailContacto
+        mensaje += actividad.emailContacto[0]
         return render_to_response(
             'home.html',
             {'mensaje': mensaje, 'suceso': suceso},
