@@ -332,7 +332,7 @@ def formulario_encuentro_view(request, idActividad):
 
         if ipBoolean == True:
             suceso = False
-            mensaje = 'ERROR: Usted ya se ha inscripto a esta actividad'
+            mensaje = 'ERROR: Usted ya se ha inscripto a esta actividad, por favor verifique su mail.'
             return render_to_response(
                 'home.html',
                 {'mensaje': mensaje, 'suceso': suceso},
@@ -361,7 +361,7 @@ def formulario_encuentro_view(request, idActividad):
 
                 if ciBoolean:
                     suceso = False
-                    mensaje = 'ERROR: Usted ya se ha inscripto a esta actividad'
+                    mensaje = 'ERROR: Usted ya se ha inscripto a esta actividad, por favor verifique su mail.'
                     return render_to_response(
                         'home.html',
                         {'mensaje': mensaje, 'suceso': suceso},
@@ -372,7 +372,7 @@ def formulario_encuentro_view(request, idActividad):
                 inscripto = formulario.save()
             except IntegrityError:
                 suceso = False
-                mensaje = 'ERROR: Usted ya se ha inscripto a esta actividad'
+                mensaje = 'ERROR: Usted ya se ha inscripto a esta actividad, por favor verifique su mail.'
                 return render_to_response(
                     'home.html',
                     {'mensaje': mensaje, 'suceso': suceso},
