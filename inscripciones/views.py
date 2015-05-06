@@ -255,10 +255,11 @@ def formulario_actividad_view(request, idActividad):
                              inscripto.telefonoContacto.encode('utf-8'), inscripto.alimentacion.encode('utf-8'),
                              inscripto.comentarios.encode('utf-8'),
                              inscripto.direccionIP, inscripto.fechaInscripcion])
-                    email = EmailMessage('Inscriptos', 'Documento con los inscriptos',
+                    email = EmailMessage('Inscriptos',
+                                         'Documento con los inscriptos de la actividad ' + actividad.nombre,
                                          settings.EMAIL_HOST_USER, actividad.emailContacto)
                     dateForAttach = datetime.now().date()
-                    email.attach('inscriptos-' + actividad.nombre + '-'+ dateForAttach.__str__() + '.csv', csvfile.getvalue(), 'text/csv')
+                    email.attach('inscriptos-' + dateForAttach.__str__() + '.csv', csvfile.getvalue(), 'text/csv')
                     email.send()
             return render_to_response(
                 'home.html',
@@ -652,8 +653,10 @@ def envio_inscriptos_parcial_view():
                  inscripto.telefonoContacto.encode('utf-8'), inscripto.alimentacion.encode('utf-8'),
                  inscripto.comentarios.encode('utf-8'),
                  inscripto.direccionIP, inscripto.fechaInscripcion])
-        email = EmailMessage('Inscriptos', 'Documento con los inscriptos',
+
+        email = EmailMessage('Inscriptos',
+                             'Documento con los inscriptos de la actividad ' + actividad.nombre,
                              settings.EMAIL_HOST_USER, actividad.emailContacto)
         dateForAttach = datetime.now().date()
-        email.attach('inscriptos-' + actividad.nombre + '-'+ dateForAttach.__str__() + '.csv', csvfile.getvalue(), 'text/csv')
+        email.attach('inscriptos-' + dateForAttach.__str__() + '.csv', csvfile.getvalue(), 'text/csv')
         email.send()
