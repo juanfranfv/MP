@@ -46,6 +46,7 @@ class FormularioActividadForm(MyForm):
         ('M', 'M'),
         ('G', 'G'),
         ('XG', 'XG'),
+        ('XXG', 'XXG'),
     )
 
     AUTO_OPCIONES = (
@@ -53,9 +54,11 @@ class FormularioActividadForm(MyForm):
         ('No', 'No'),
     )
 
-    #remera = forms.ChoiceField(choices=REMERA_OPCIONES, label="Tamaño de remera", required=True)
-    #experiencia = forms.ChoiceField(choices=AUTO_OPCIONES, label="Ya construiste en TECHO", required=True)
-    #descripcion = forms.CharField(max_length=500, label="Cuantas veces y que roles ocupaste", widget=forms.Textarea, required=False)
+    remera = forms.ChoiceField(choices=REMERA_OPCIONES, label="Tamaño de remera", required=True)
+    vehiculo = forms.ChoiceField(choices=AUTO_OPCIONES, label="Disponibilidad de Camioneta", required=True)
+    asististe = forms.CharField(max_length=500, label="Asististe a las MIP 2014? Indicar pueblo y fermentos", widget=forms.Textarea, required=True)
+    experiencia = forms.ChoiceField(choices=AUTO_OPCIONES, label="Experiencia misionando", required=True)
+    descripcion = forms.CharField(max_length=500, label="Cuantas veces y que roles ocupaste", widget=forms.Textarea, required=False)
 
 
     class Meta:

@@ -205,7 +205,22 @@ def formulario_actividad_view(request, idActividad):
                     )
 
             try:
-                inscripto = formulario.save()
+                #inscripto = formulario.save()
+                vehiculo = formulario.cleaned_data['vehiculo']
+                remera = formulario.cleaned_data['remera']
+                asististe = formulario.cleaned_data['asististe']
+                experiencia = formulario.cleaned_data['experiencia']
+                descripcion = formulario.cleaned_data['descripcion']
+                comentarios = formulario.cleaned_data['comentarios']
+                formulario.comentarios = comentarios
+                inscripto = formulario.save(commit=False)
+                inscripto.comentarios += ". Remera: " + remera
+                inscripto.comentarios += ". Disponibilidad de Camioneta: " + vehiculo
+                inscripto.comentarios += ". MIP 2014: " + asististe
+                inscripto.comentarios += ". Experiencia misionando: " + experiencia
+                inscripto.comentarios += ". Descripcion de la experiencia: " + descripcion
+
+                inscripto.save()
             except IntegrityError:
                 suceso = False
                 mensaje = 'ERROR: Usted ya se ha inscripto a esta actividad'
