@@ -216,7 +216,7 @@ def formulario_actividad_view(request, idActividad):
                 inscripto = formulario.save(commit=False)
                 inscripto.comentarios += ". Remera: " + remera
                 inscripto.comentarios += ". Disponibilidad de Camioneta: " + vehiculo
-                inscripto.comentarios += ". MIP 2014: " + asististe
+                inscripto.comentarios += ". MIP 2015: " + asististe
                 inscripto.comentarios += ". Experiencia misionando: " + experiencia
                 inscripto.comentarios += ". Descripcion de la experiencia: " + descripcion
 
